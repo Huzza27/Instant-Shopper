@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 26999d28051d5ec4283274217aa5fba7
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 255681
+  packageName: Mega Low Poly Shop Interiors
+  packageVersion: 2.1
+  assetPath: Assets/Low Poly Mega Supermarket/Shader/Market_TextureAnimation.shader
+  uploadId: 677564

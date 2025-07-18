@@ -1,0 +1,28 @@
+fileFormatVersion: 2
+guid: b258fd8a9779e1148895b63994d61af0
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Merriweather
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 255681
+  packageName: Mega Low Poly Shop Interiors
+  packageVersion: 2.1
+  assetPath: Assets/Low Poly Mega Supermarket/Fonts/Merriweather-Bold.ttf
+  uploadId: 677564

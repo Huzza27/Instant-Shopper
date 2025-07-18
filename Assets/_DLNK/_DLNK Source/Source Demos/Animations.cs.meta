@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 3672b81324b75f249962ab7f82ddc141
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 28461
+  packageName: Zombie Cartoon
+  packageVersion: 1.1.4
+  assetPath: Assets/_DLNK/_DLNK Source/Source Demos/Animations.cs
+  uploadId: 490569
