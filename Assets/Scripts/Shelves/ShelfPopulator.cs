@@ -7,6 +7,12 @@ public class ShelfPopulator : MonoBehaviour
     public float depthLayerSpacing = 0.05f;
     public int maxItems = 10;
     public int numberOfDepthLayers = 3;
+    [SerializeField] private ShelfSlot shelfSlot;
+
+    void Start()
+    {
+        shelfSlot = GetComponent<ShelfSlot>();
+    }
 
     public void FillShelfFromList(List<ShelfItem> itemsToPlace)
     {
@@ -60,6 +66,7 @@ public class ShelfPopulator : MonoBehaviour
             {
                 GameObject instance = Instantiate(selectedItem.prefab, transform);
                 Collider col = instance.GetComponentInChildren<Collider>();
+                shelfSlot.AddItem(instance.GetComponent<ShelfItem>());
 
                 if (!col)
                 {
@@ -86,6 +93,7 @@ public class ShelfPopulator : MonoBehaviour
                     instance.transform.localPosition.z
                 );
             }
+            shelfSlot.SetMaxItemsForShelfOnInitialPopulation(itemsPerRow * numberOfDepthLayers);
         }
     }
 }

@@ -3,24 +3,28 @@ using UnityEngine;
 
 public class Shelf : MonoBehaviour
 {
-    private List<GameObject> shelveSlots;
+    private List<ShelfSlot> shelfSlots;
 
     void Awake()
     {
-        shelveSlots = new List<GameObject>();
+        shelfSlots = new List<ShelfSlot>();
 
-        foreach (ShelfPopulator populator in GetComponentsInChildren<ShelfPopulator>())
+        foreach (ShelfSlot slot in GetComponentsInChildren<ShelfSlot>())
         {
-            shelveSlots.Add(populator.gameObject);
+            shelfSlots.Add(slot);
         }
     }
 
     public void PopulateShelf(List<ShelfItem> itemsToPlace)
     {
-        foreach (GameObject slot in shelveSlots)
+        foreach (ShelfSlot slot in shelfSlots)
         {
-            slot.GetComponent<ShelfPopulator>().FillShelfFromList(itemsToPlace);
+            slot.FillShelfFromList(itemsToPlace);
         }
+    }
 
+    public ShelfSlot GetRandomSlot()
+    {
+        return shelfSlots[Random.Range(0, shelfSlots.Count)];
     }
 }

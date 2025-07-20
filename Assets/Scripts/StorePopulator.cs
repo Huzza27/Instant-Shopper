@@ -3,14 +3,25 @@ using UnityEngine;
 
 public class StorePopulator : MonoBehaviour
 {
-    [SerializeField] List<ShelfItem> allItems;
-    [SerializeField] List<Shelf> shelves;
+    public StorePopulator instance;
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
-        foreach (Shelf shelf in shelves)
+        foreach (Shelf shelf in ShelfManager.Instance.GetShelves())
         {
-            shelf.PopulateShelf(allItems);
+            shelf.PopulateShelf(ShelfManager.Instance.GetAllItems());
         }
-    }
+    }  
 }
