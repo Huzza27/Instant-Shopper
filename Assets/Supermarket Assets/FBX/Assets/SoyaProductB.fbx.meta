@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: 92b5643f5ab8e6a44992de22013549e6
+AssetOrigin:
+  serializedVersion: 1
+  productId: 310052
+  packageName: Supermarket Store Assets
+  packageVersion: 1.0
+  assetPath: Assets/Supermarket Assets/FBX/Assets/SoyaProductB.fbx
+  uploadId: 729984
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -16,8 +23,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -32,7 +37,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
@@ -107,10 +112,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 310052
-  packageName: Supermarket Store Assets
-  packageVersion: 1.0
-  assetPath: Assets/Supermarket Assets/FBX/Assets/SoyaProductB.fbx
-  uploadId: 729984

@@ -4,13 +4,13 @@ using UnityEngine.Events;
 
 public class Shopper : MonoBehaviour
 {
-    [SerializeField] public UnityEvent<Cart> OnShoppingCartInteract;
+    [SerializeField] public UnityEvent<ICart> OnShoppingCartInteract;
     [SerializeField] public FollowCamera cameraFollowScript;
     [SerializeField] public FPSCamera fpsCamera;
     [SerializeField] private bool isHoldingSomething;
     [SerializeField] private Inventory inventory;
     [SerializeField] private Transform itemHoldingPoint;
-    [SerializeField] Cart cart;
+    [SerializeField] ICart cart;
 
     void Start()
     {
@@ -70,7 +70,7 @@ public class Shopper : MonoBehaviour
     public void TryPickupItem(ShelfItem item)
     {
         if (!inventory.CanPickUpItem()) return;
-         ShelfItem newItem = item.CreateItemClone();
+        ShelfItem newItem = item.CreateItemClone();
         MoveItemToHand(newItem);
         AddItemToInventory(newItem);
     }
@@ -80,12 +80,12 @@ public class Shopper : MonoBehaviour
         inventory.RemoveItemFromInventory(item);
     }
 
-    public void SetCart(Cart newCart)
+    public void SetCart(ICart newCart)
     {
         cart = newCart;
     }
 
-    public Cart GetCart()
+    public ICart GetCart()
     {
         return cart;
     }

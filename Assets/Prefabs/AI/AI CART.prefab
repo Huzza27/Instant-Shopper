@@ -485,7 +485,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   locationWherePlayerMovesToPushCart: {fileID: 5147590369969468266}
   rb: {fileID: 6972603532706347130}
-  cart: {fileID: 2418179372731110657}
 --- !u!1 &8623044689725120371
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,8 +549,9 @@ GameObject:
   - component: {fileID: 2994666853462295534}
   - component: {fileID: 5554773620931042375}
   - component: {fileID: 5988705193452753050}
-  - component: {fileID: 2418179372731110657}
   - component: {fileID: 6972603532706347130}
+  - component: {fileID: 7125456389012448589}
+  - component: {fileID: 6842697119386665868}
   m_Layer: 3
   m_Name: AI CART
   m_TagString: Untagged
@@ -634,27 +634,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2418179372731110657
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9103684916803040974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d08f9bf49d2dac4c9815e7622c5df5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationPivot: {fileID: 3863892655213058464}
-  playerStandingPoint: {fileID: 5147590369969468266}
-  cartCameraMount: {fileID: 5935740112437871326}
-  cartRB: {fileID: 6972603532706347130}
-  noCollideWithCart:
-    serializedVersion: 2
-    m_Bits: 0
-  itemDropInCartTransform: {fileID: 2285061771422453804}
-  itemFreezeDelay: 2
 --- !u!54 &6972603532706347130
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -682,6 +661,41 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &7125456389012448589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9103684916803040974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c1e29f2ad4aac4459d10fa8c1307d7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemPlacer: {fileID: 6842697119386665868}
+  itemDropInCartTransform: {fileID: 2285061771422453804}
+  playerStandingPoint: {fileID: 5147590369969468266}
+  cartCameraMount: {fileID: 5935740112437871326}
+  rotationPivot: {fileID: 3863892655213058464}
+  cartRB: {fileID: 6972603532706347130}
+--- !u!114 &6842697119386665868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9103684916803040974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48d4b6e76dd4547419dfa1d63ee1932a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  freezeDelay: 2
+  noCollideWithCart:
+    serializedVersion: 2
+    m_Bits: 512
+  spawnerOverride: {fileID: 0}
 --- !u!1001 &6650029264605594071
 PrefabInstance:
   m_ObjectHideFlags: 0

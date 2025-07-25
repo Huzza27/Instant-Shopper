@@ -6,47 +6,61 @@ using UnityEngine.InputSystem;
 public class ShoppingListManager : MonoBehaviour
 {
     [SerializeField] private List<ShelfItem> items;
-    [SerializeField] private GameObject shoppingLisItemPrefab;
-    [SerializeField] private Transform shoppingListContainer;
     [SerializeField] private UnityEvent OnListUIToggled;
+    [SerializeField] private UnityEvent<ShelfItemData, int> OnItemRemoveFromList;
+    [SerializeField] private UnityEvent<ShelfItemData, int> OnItemAddedToList;
     [SerializeField] private InputAction toggleShoppingListAction;
 
+    private Dictionary<ShelfItemData, int> shoppingList;
 
-    public void Start()
+    private void Start()
     {
         toggleShoppingListAction.Enable();
         toggleShoppingListAction.performed += ctx => OnListUIToggled.Invoke();
 
-        Dictionary<ShelfItem, int> shoppingList = GenerateShoppingList(10);
-        PopulateShoppingListUI(shoppingList);
+        GenerateShoppingList(10);
+        //PopulateShoppingListUI();
     }
 
-    void PopulateShoppingListUI(Dictionary<ShelfItem, int> list)
+    private void GenerateShoppingList(int length)
     {
-        foreach (ShelfItem item in list.Keys)
-        {
-            GameObject shoppingListItem = Instantiate(shoppingLisItemPrefab, shoppingListContainer.transform);
-            shoppingListItem.transform.SetParent(shoppingListContainer);
-            shoppingLisItemPrefab.GetComponent<ShoppingLIstItem>().SetText(item.GetItemData().itemName, list[item]);
-        }
-    }
-    public Dictionary<ShelfItem, int> GenerateShoppingList(int length)
-    {
-        Dictionary<ShelfItem, int> shoppingList = new Dictionary<ShelfItem, int>();
+        shoppingList = new Dictionary<ShelfItemData, int>();
         for (int i = 0; i < length; i++)
         {
             ShelfItem item = items[Random.Range(0, items.Count)];
             int quantity = Random.Range(1, 5); // Random quantity between 1 and 4
-            if (!shoppingList.ContainsKey(item))
-            {
-                shoppingList.Add(item, quantity);
 
+            if (!shoppingList.ContainsKey(item.GetItemData()))
+            {
+                shoppingList.Add(item.GetItemData(), quantity);
             }
             else
             {
-                i--;
+                i--; // Retry to ensure unique items
             }
         }
-        return shoppingList;
+    }
+
+    private void PopulateShoppingListUI()
+    {
+        foreach(ShelfItemData data in shoppingList.Keys)
+        {
+            OnItemAddedToList.Invoke(data, shoppingList[data]);
+        }
+    }
+
+    public void RemoveItemFromList(ShelfItemData item)
+    {
+        if (shoppingList.ContainsKey(item))
+        {
+            shoppingList[item]--;
+
+            OnItemRemoveFromList.Invoke(item, shoppingList[item]);
+
+            if (shoppingList[item] <= 0)
+            {
+                shoppingList.Remove(item);
+            }
+        }
     }
 }

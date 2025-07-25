@@ -17,7 +17,7 @@ public class Cart : MonoBehaviour
 
         GameObject newItemClone = Instantiate(item.GetItemData().prefab, itemDropInCartTransform.position, Quaternion.identity);
         newItemClone.transform.position = itemDropInCartTransform.position;
-        newItemClone.GetComponent<ShelfItem>().EnablePhysics();
+        //newItemClone.GetComponent<ShelfItem>().EnablePhysics();
         newItemClone.transform.SetParent(this.transform);
 
         Destroy(item.gameObject);

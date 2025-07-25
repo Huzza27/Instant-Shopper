@@ -77,10 +77,19 @@ PrefabInstance:
       addedObject: {fileID: 5623667611947715154}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: df7583bc52dbff14e96642184a18a0df, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 7860436920191257793}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: df7583bc52dbff14e96642184a18a0df, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 2913705045045124699}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: df7583bc52dbff14e96642184a18a0df, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1663569605254742898}
+      addedObject: {fileID: 8355924625511637047}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: df7583bc52dbff14e96642184a18a0df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4304517129398337751}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: df7583bc52dbff14e96642184a18a0df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1997039773499935603}
   m_SourcePrefab: {fileID: 100100000, guid: df7583bc52dbff14e96642184a18a0df, type: 3}
 --- !u!1 &4887423485199677108 stripped
 GameObject:
@@ -100,7 +109,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 302775a43b2a40b4d8e9e2386f9b184d, type: 2}
-  cloneScale: {x: 0, y: 0, z: 0}
+  cloneScale: {x: 2, y: 2, z: 2}
+  settleDelay: 0.5
+--- !u!114 &7860436920191257793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4887423485199677108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e99a0cf565fad042a07216606de449f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: 
+  prefab: {fileID: 0}
+  sharedMeshLibrary: {fileID: 11400000, guid: 162b4b3938eec0b469d2b8a3f6723fc2, type: 2}
+  icon: {fileID: 0}
+  weight: 0
+  itemType: 0
+  itemShape: 0
+  size: 0
+  visualOffset: {x: 0, y: 0, z: 0}
+  visualScale: {x: 1, y: 1, z: 1}
+  UVOffset: {x: 0, y: 0}
+  UVScale: {x: 0, y: 0}
+  BoundsSize: {x: 0, y: 0, z: 0}
+  sharedMaterial: {fileID: 0}
 --- !u!65 &2913705045045124699
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -114,7 +150,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -122,30 +158,112 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.20574462, y: 0.2552391, z: 0.07245284}
   m_Center: {x: 0.0000006109476, y: 0.12237884, z: -0.00000007636845}
---- !u!54 &1663569605254742898
-Rigidbody:
+--- !u!114 &8355924625511637047
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4887423485199677108}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 496811e5d5d9b4bcba367bcf82bb26ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateInEditMode: 1
+  _updateInPlayMode: 1
+  _skipInactiveObjects: 1
+  _inputProvider: {fileID: 0}
+--- !u!114 &4304517129398337751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4887423485199677108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 994c66b6148109b489689ed705d244cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Parent: {fileID: 0}
+  SiblingIndex: 0
+  LayoutPosition: {x: 0, y: 0, z: 0}
+  LayoutRotation: {x: 0, y: 0, z: 0, w: 1}
+  AdapterBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  LayoutBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  RotatedAndScaledBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  ComponentScale: {x: 1, y: 1, z: 1}
+  FillSize: {x: 0, y: 0, z: 0}
+  ShrinkSize: {x: 999999, y: 999999, z: 999999}
+  TargetPosition: {x: 0, y: 0, z: 0}
+  TargetRotation: {x: 0, y: 0, z: 0, w: 1}
+  TargetScale: {x: 1, y: 1, z: 1}
+  TargetRectSize: {x: 0, y: 0, z: 0}
+  TransformPosition: {x: 0, y: 0, z: 0}
+  TransformRotation: {x: 0, y: 0, z: 0, w: 1}
+  TransformScale: {x: 1, y: 1, z: 1}
+  TransformRectSize: {x: 0, y: 0}
+--- !u!114 &1997039773499935603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4887423485199677108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b0da67f6b3c9a4e84ed47af9da4884, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _version: 0
+  _widthType: 2
+  _width: 1
+  _widthOfParent: 1
+  _heightType: 2
+  _height: 1
+  _heightOfParent: 1
+  _depthType: 2
+  _depth: 1
+  _depthOfParent: 1
+  _minWidthType: 0
+  _minWidth: 0
+  _minWidthOfParent: 0
+  _minHeightType: 0
+  _minHeight: 0
+  _minHeightOfParent: 0
+  _minDepthType: 0
+  _minDepth: 0
+  _minDepthOfParent: 0
+  _maxWidthType: 0
+  _maxWidth: 1
+  _maxWidthOfParent: 1
+  _maxHeightType: 0
+  _maxHeight: 1
+  _maxHeightOfParent: 1
+  _maxDepthType: 0
+  _maxDepth: 1
+  _maxDepthOfParent: 1
+  _offset: {x: 0, y: 0, z: 0}
+  _scale: {x: 2, y: 2, z: 2}
+  _rotation: {x: 0, y: 0, z: 0, w: 1}
+  _marginLeft: 0
+  _marginRight: 0
+  _marginTop: 0
+  _marginBottom: 0
+  _marginFront: 0
+  _marginBack: 0
+  _paddingLeft: 0
+  _paddingRight: 0
+  _paddingTop: 0
+  _paddingBottom: 0
+  _paddingFront: 0
+  _paddingBack: 0
+  _skipLayout: 0
+  _useDefaultAdapter: 1

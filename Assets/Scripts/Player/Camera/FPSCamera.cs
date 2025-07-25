@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class FPSCamera : MonoBehaviour
@@ -10,11 +9,16 @@ public class FPSCamera : MonoBehaviour
     [SerializeField] private float sensitivity = 100f;
     [SerializeField] private float clampAngle = 80f;
 
+    [Header("Driving")]
+    [SerializeField] private Transform cartTransform;  // Assign the cart root transform
+    public bool isDriving = false;                     // Toggle this externally when player enters/exits cart
+
     private float pitch = 0f;
     private float yaw = 0f;
-
     private float mouseX;
     private float mouseY;
+
+    private float fixedYaw;
 
     void Start()
     {
@@ -27,28 +31,37 @@ public class FPSCamera : MonoBehaviour
 
     void Update()
     {
-        // Read input (frame-accurate)
-        mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
-        mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+        if (!isDriving)
+        {
+            mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+            mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
 
-        // Apply pitch
-        pitch -= mouseY;
-        pitch = Mathf.Clamp(pitch, -clampAngle, clampAngle);
+            pitch -= mouseY;
+            pitch = Mathf.Clamp(pitch, -clampAngle, clampAngle);
+        }
     }
 
     void LateUpdate()
     {
-        yaw += mouseX;
-        yaw = Mathf.Repeat(yaw, 360f);
-        cameraPivot.rotation = Quaternion.Euler(0f, yaw, 0f);
-        cameraTransform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
-        playerJoint.targetRotation = Quaternion.Euler(0f, -yaw, 0f);
+        if (isDriving && cartTransform != null)
+        {
+            // While driving, sync rotation with the cart
+            float cartYaw = cartTransform.eulerAngles.y;
+            transform.rotation = Quaternion.Euler(0f, cartYaw, 0f);
+        }
+        else
+        {
+            // Normal camera control
+            yaw += mouseX;
+            yaw = Mathf.Repeat(yaw, 360f);
 
-        CacheFixedYaw();
+            cameraPivot.rotation = Quaternion.Euler(0f, yaw, 0f);
+            cameraTransform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+            playerJoint.targetRotation = Quaternion.Euler(0f, -yaw, 0f);
+
+            CacheFixedYaw();
+        }
     }
-
-
-    private float fixedYaw;
 
     public void CacheFixedYaw()
     {
