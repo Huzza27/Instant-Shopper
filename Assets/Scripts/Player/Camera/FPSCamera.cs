@@ -1,75 +1,25 @@
+// FPSCamera: attach to a child GameObject holding the Camera.
+// Put PlayerMotor on the parent. Set playerBody = parent transform.
 using UnityEngine;
 
 public class FPSCamera : MonoBehaviour
 {
-    [SerializeField] private Transform cameraPivot;     // Rotates with yaw
-    [SerializeField] private Transform cameraTransform; // Child of pivot; rotates with pitch
-    [SerializeField] private ConfigurableJoint playerJoint;
+    public float sensitivity = 200f;
+    public Transform playerBody;
 
-    [SerializeField] private float sensitivity = 100f;
-    [SerializeField] private float clampAngle = 80f;
+    float xRot;
 
-    [Header("Driving")]
-    [SerializeField] private Transform cartTransform;  // Assign the cart root transform
-    public bool isDriving = false;                     // Toggle this externally when player enters/exits cart
-
-    private float pitch = 0f;
-    private float yaw = 0f;
-    private float mouseX;
-    private float mouseY;
-
-    private float fixedYaw;
-
-    void Start()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        yaw = cameraPivot.eulerAngles.y;
-
-        playerJoint.axis = Vector3.right;
-        playerJoint.secondaryAxis = Vector3.up;
-    }
+    void Start() => Cursor.lockState = CursorLockMode.Locked;
 
     void Update()
     {
-        if (!isDriving)
-        {
-            mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
-            mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
 
-            pitch -= mouseY;
-            pitch = Mathf.Clamp(pitch, -clampAngle, clampAngle);
-        }
-    }
+        xRot -= mouseY;
+        xRot = Mathf.Clamp(xRot, -89f, 89f);
+        transform.localRotation = Quaternion.Euler(xRot, 0f, 0f);
 
-    void LateUpdate()
-    {
-        if (isDriving && cartTransform != null)
-        {
-            // While driving, sync rotation with the cart
-            float cartYaw = cartTransform.eulerAngles.y;
-            transform.rotation = Quaternion.Euler(0f, cartYaw, 0f);
-        }
-        else
-        {
-            // Normal camera control
-            yaw += mouseX;
-            yaw = Mathf.Repeat(yaw, 360f);
-
-            cameraPivot.rotation = Quaternion.Euler(0f, yaw, 0f);
-            cameraTransform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
-            playerJoint.targetRotation = Quaternion.Euler(0f, -yaw, 0f);
-
-            CacheFixedYaw();
-        }
-    }
-
-    public void CacheFixedYaw()
-    {
-        fixedYaw = yaw;
-    }
-
-    public float GetCachedYaw()
-    {
-        return fixedYaw;
+        playerBody.Rotate(Vector3.up * mouseX);
     }
 }

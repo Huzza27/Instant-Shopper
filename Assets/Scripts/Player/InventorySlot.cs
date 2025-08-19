@@ -46,5 +46,6 @@ public class InventorySlot : MonoBehaviour
     {
         tempItemName.color = Color.black;
         tempItemName.text = "None";
+        itemInSlot = null;
     }
 }

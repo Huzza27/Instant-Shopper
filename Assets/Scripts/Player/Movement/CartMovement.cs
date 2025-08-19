@@ -1,73 +1,66 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class CartMovement : BaseMovementBehavior
+public class CartMovement : MonoBehaviour
 {
-    [SerializeField] PlayerCart currentCart; //Temporary reference to the cart being driven
-    [SerializeField] Rigidbody playerRB;
-    [SerializeField] float moveSpeed;
-    [SerializeField] float turnSpeed;
-
-    [SerializeField] Shopper thisShopper;
-
+    [SerializeField] PlayerCart currentCart;
+    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float turnSpeed = 180f;
+    [SerializeField] Shopper driver;
     [SerializeField] InputAction rightMouseDown;
-
     [SerializeField] float cameraResetSpeed = 5f;
 
     private bool cartCanRotate = true;
     private bool isResettingCamera = false;
 
+    // cache inputs
+    private float inputMouseX;
+    private float inputV;
+
     void Start()
     {
         rightMouseDown.Enable();
-        rightMouseDown.performed += ctx => SetRotationFlagForCart(false);
-        rightMouseDown.canceled += ctx => SetRotationFlagForCart(true);
+        rightMouseDown.performed += _ => SetRotationFlagForCart(false);
+        rightMouseDown.canceled += _ => SetRotationFlagForCart(true);
+    }
+
+    public void SetDriver(Shopper neDriver)
+    {
+        driver = neDriver;
     }
 
     void Update()
     {
-        HandleCartDriving();
+        if (!currentCart) return;
 
-        if (isResettingCamera)
+        inputMouseX = Input.GetAxis("Mouse X");
+        inputV = Input.GetAxis("Vertical");
+
+        if (isResettingCamera && currentCart != null)
         {
+            var mount = currentCart.GetCameraMount();
             Quaternion targetRotation = Quaternion.identity;
-            currentCart.GetCameraMount().localRotation = Quaternion.Slerp(
-                currentCart.GetCameraMount().localRotation,
+            mount.localRotation = Quaternion.Slerp(
+                mount.localRotation,
                 targetRotation,
                 Time.deltaTime * cameraResetSpeed
             );
-
-            // Stop resetting if close enough
-            if (Quaternion.Angle(currentCart.GetCameraMount().localRotation, targetRotation) < 0.1f)
+            if (Quaternion.Angle(mount.localRotation, targetRotation) < 0.1f)
             {
-                currentCart.GetCameraMount().localRotation = targetRotation;
+                mount.localRotation = targetRotation;
                 isResettingCamera = false;
             }
         }
+
+        // 👇 New check each frame
+        CheckAndAlignCartWithCamera();
     }
 
-    public override void Move(Rigidbody rb)
+    void FixedUpdate()
     {
+        if (!currentCart) return;
         HandleCartDriving();
-    }
-
-    public void InitializeCartInteraction(ICart cart)
-    {
-        if(cart is PlayerCart playerCart)
-        {
-            currentCart = playerCart;
-        }
-        else
-        {
-            Debug.LogError("CartMovement can only handle PlayerCart instances.");
-            return;
-        }
-        SetCameraTarget();
-    }
-
-    void SetCameraTarget()
-    {
-        thisShopper.cameraFollowScript.SetTarget(currentCart.GetCameraMount());
     }
 
     private void HandleCartDriving()
@@ -76,7 +69,7 @@ public class CartMovement : BaseMovementBehavior
 
         if (cartCanRotate)
         {
-            // --- Cart Rotation ---
+            // Cart Rotation
             Quaternion deltaRotation = Quaternion.Euler(0f, mouseX * turnSpeed * Time.deltaTime, 0f);
 
             Vector3 pivotToCart = currentCart.transform.position - currentCart.GetRotationPivot().position;
@@ -84,30 +77,43 @@ public class CartMovement : BaseMovementBehavior
             Vector3 newPosition = currentCart.GetRotationPivot().position + rotatedOffset;
 
             currentCart.GetCartRB().MoveRotation(deltaRotation * currentCart.GetCartRB().rotation);
-            currentCart.GetCartRB().MovePosition(newPosition);
+            //currentCart.GetCartRB().MovePosition(newPosition);
         }
         else
         {
-            // --- Camera Look Rotation ---
+            // Camera Look Rotation
             currentCart.GetCameraMount().localRotation *= Quaternion.Euler(0f, mouseX * turnSpeed * Time.deltaTime, 0f);
         }
 
-        // --- Forward/Backward movement ---
+        // Forward/Backward movement
         float v = Input.GetAxis("Vertical");
         Vector3 moveDir = currentCart.transform.forward * v * moveSpeed * Time.deltaTime;
         currentCart.GetCartRB().MovePosition(currentCart.GetCartRB().position + moveDir);
-
-        // --- Player follows cart ---
-        playerRB.MovePosition(currentCart.GetStandingPoint().position);
     }
 
     void SetRotationFlagForCart(bool canRotate)
     {
         cartCanRotate = canRotate;
+        if (canRotate) isResettingCamera = true;
+    }
 
-        if (canRotate)
+    private void CheckAndAlignCartWithCamera()
+    {
+        if (!currentCart) return;
+
+        Rigidbody rb = currentCart.GetCartRB();
+        bool isIdle = rb.linearVelocity.sqrMagnitude < 0.001f && Mathf.Abs(inputMouseX) < 0.01f && Mathf.Abs(inputV) < 0.01f;
+
+        if (isIdle)
         {
-            isResettingCamera = true;
+            Quaternion targetRot = Quaternion.LookRotation(driver.transform.forward, Vector3.up);
+            Quaternion newRot = Quaternion.Slerp(
+                rb.rotation,
+                targetRot,
+                Time.deltaTime * cameraResetSpeed
+            );
+
+            rb.MoveRotation(newRot);
         }
     }
 }

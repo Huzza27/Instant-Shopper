@@ -1,20 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SimpleNPC : MonoBehaviour, INPCBehavior
+public enum NPCState
 {
+    Idle,
+    Shopping,
+    Ragdoll
+}
+
+public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
+{
+    private NPCState currentState = NPCState.Idle;
     public float wanderRadius = 10f;
     public float itemCollectionDelay;
     public float moveToNewShelfDelay;
     private NavMeshAgent agent;
-    private int numItemsToCollect = 10;
+    [SerializeField] private int numItemsToCollect;
     private int itemsCollected = 0;
     [SerializeField] private Cart cart;
-
     private List<ShelfItem> shopperInventory = new List<ShelfItem>();
+
+    [SerializeField] private Animator animator;
+    [SerializeField] private GameObject ragDollObject;
+
 
     void Start()
     {
@@ -23,6 +35,10 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior
 
     private IEnumerator ShopRoutine()
     {
+        if (currentState == NPCState.Ragdoll)
+        {
+            yield break;
+        }
         while (itemsCollected < numItemsToCollect)
         {
             Shelf shelf = GetShelf();
@@ -40,8 +56,20 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior
             // Wait a short time before going to next shelf (optional)
             yield return new WaitForSeconds(moveToNewShelfDelay);
         }
+        OnShoppingComplete();
 
-        Debug.Log("Shopping complete!");
+        
+    }
+
+    public void OnShoppingComplete()
+    {
+        ICashRegister register = CashRegisterManager.Instance.GetRandomRegister();
+        MoveToNewPosition(register.GetRegisterPoisiton());
+    }
+
+    public void TestDestyroyNPC()
+    {
+        Destroy(this.gameObject);
     }
 
     void PlaceItemInCart(ShelfItem item)
@@ -78,10 +106,10 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior
     IEnumerator CollectItem(ShelfSlot slot, ShelfItem item)
     {
         yield return new WaitForSeconds(itemCollectionDelay);
-            slot.RemoveItemFromSlot();
-            shopperInventory.Add(item);
-            PlaceItemInCart(item);
-            itemsCollected++;
+        slot.RemoveItemFromSlot();
+        shopperInventory.Add(item);
+        PlaceItemInCart(item);
+        itemsCollected++;
     }
 
 
@@ -107,9 +135,33 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior
         StartCoroutine(ShopRoutine());
     }
 
-
+    public void SetState(NPCState state)
+    {
+        currentState = state;
+    }
     public void ReactToChaos()
     {
         throw new System.NotImplementedException();
+    }
+
+    public void Ragdoll()
+    {
+        SetState(NPCState.Ragdoll);
+        agent.isStopped = true;
+        animator.enabled = false;
+        ragDollObject.SetActive(true);
+        ragDollObject.GetComponent<Rigidbody>().AddForce(Vector3.one * 10f, ForceMode.Impulse);
+        SecurityAlertManager.Instance.AlertSecurity(transform.position);
+        Invoke(nameof(UnRagdoll), 5f); // Automatically unragdoll after 5 seconds
+    }
+
+    public void UnRagdoll()
+    {
+        agent.isStopped = false;
+        ragDollObject.SetActive(false);
+        animator.enabled = true;
+        
+        SetState(NPCState.Idle);
+        StartCoroutine(ShopRoutine());
     }
 }

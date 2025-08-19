@@ -8,7 +8,12 @@ public class ShelfSlot : MonoBehaviour
     [SerializeField] private int maxItems;
     [SerializeField] List<ShelfItem> itemsInSlot;
     [SerializeField] private Transform aiShelfTransform;
-    [SerializeField] private ShelfPopulator populator;
+    private ShelfPopulator populator;
+
+    void Start()
+    {
+        populator = GetComponent<ShelfPopulator>();
+    }
 
 
     public void FillShelfFromList(List<ShelfItem> items)

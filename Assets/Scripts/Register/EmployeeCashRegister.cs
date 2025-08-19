@@ -16,8 +16,13 @@ public class EmployeeCashRegister : MonoBehaviour, ICashRegister
     {
         foreach (ShelfItem item in cart.GetItems())
         {
-            OnItemPurschased.Invoke(item.GetItemData());
+            OnItemPurschased.Invoke(item.GetOriginalItemDataReferece());
         }
         cart.ClearCartInventory();
+    }
+
+    public Transform GetRegisterPoisiton()
+    {
+        return transform;
     }
 }

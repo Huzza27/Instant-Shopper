@@ -16,4 +16,6 @@ public class ShoppingListUI : MonoBehaviour
             shoppingListPanel.SetActive(true);
         }
     }
+
+    
 }

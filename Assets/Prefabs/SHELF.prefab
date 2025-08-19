@@ -10,10 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1903759560870453840}
   - component: {fileID: 6533082054270379519}
-  - component: {fileID: 6523418816645863916}
   - component: {fileID: 2413649483829158658}
   - component: {fileID: 890906782448933320}
-  - component: {fileID: 4898411909870237502}
+  - component: {fileID: 3230714559862358123}
   m_Layer: 0
   m_Name: SHELF
   m_TagString: Untagged
@@ -73,23 +72,6 @@ MonoBehaviour:
   TransformRotation: {x: 0, y: 0, z: 0, w: 1}
   TransformScale: {x: 1, y: 1, z: 1}
   TransformRectSize: {x: 0, y: 0}
---- !u!114 &6523418816645863916
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2469882990208424956}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62ecd0c9cf1896140877876eae15cf2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemSpacing: 0.02
-  depthLayerSpacing: 0.05
-  maxItems: 10
-  numberOfDepthLayers: 3
-  shelfSlot: {fileID: 890906782448933320}
 --- !u!65 &2413649483829158658
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -127,8 +109,7 @@ MonoBehaviour:
   maxItems: 0
   itemsInSlot: []
   aiShelfTransform: {fileID: 8538612792069002504}
-  populator: {fileID: 4898411909870237502}
---- !u!114 &4898411909870237502
+--- !u!114 &3230714559862358123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,10 +121,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62ecd0c9cf1896140877876eae15cf2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSpacing: 0.02
+  itemSpacing: 0.05
   depthLayerSpacing: 0.05
-  maxItems: 10
-  numberOfDepthLayers: 3
+  maxItems: 7
+  numberOfDepthLayers: 2
   shelfSlot: {fileID: 890906782448933320}
 --- !u!1 &5852566045004433443
 GameObject:

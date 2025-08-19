@@ -9,9 +9,16 @@ public enum PlayerState
     Ragdoll
 }
 
+public enum MovementMode
+{
+    Default,
+    Targeted
+}
+
 public class PlayerStateManager : MonoBehaviour
 {
     public static PlayerStateManager Instance;
+    [SerializeField] private MovementMode movementMode = MovementMode.Default;
     [SerializeField] private PlayerState playerState = PlayerState.Default;
     [SerializeField] static Shopper shopper;
     public Action OnPlayerStateChanged;
@@ -34,9 +41,19 @@ public class PlayerStateManager : MonoBehaviour
         OnPlayerStateChanged?.Invoke();
     }
 
+    public void SetMovementMode(MovementMode mode)
+    {
+        movementMode = mode;
+    }
+
     public PlayerState GetPlayerState()
     {
         return playerState;
+    }
+
+    public MovementMode GetMovementMode()
+    {
+        return movementMode;
     }
 
     public static Shopper GetShopper()

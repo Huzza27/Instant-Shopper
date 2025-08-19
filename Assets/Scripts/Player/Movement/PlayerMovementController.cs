@@ -1,37 +1,17 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class PlayerMovementController : MonoBehaviour
 {
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private SyncPhysicsAnimationsLocally[] syncedObjects;
+    [SerializeField] private CharacterController controller;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float targetedMoveSpeed = 10f;
+    private Transform target;
 
-    [SerializeField] private BaseMovementBehavior currentMovement;
-    [SerializeField] private StandardMovement defaultMovement;
-    [SerializeField] private CartMovement cartMovement;
-    [SerializeField] FPSCamera fpsCamera;
+    //PlayerStateManager.Instance.OnPlayerStateChanged += UpdateMovementTypeForNewPlayerState;
 
-
-
-    void Start()
-    {
-        PlayerStateManager.Instance.OnPlayerStateChanged += UpdateMovementTypeForNewPlayerState;
-        syncedObjects = transform.GetComponentsInChildren<SyncPhysicsAnimationsLocally>();
-    }
-
-    void FixedUpdate()
-    {
-        SyncPhysicsAnims();
-    }
-
-    void SyncPhysicsAnims()
-    {
-        foreach (SyncPhysicsAnimationsLocally item in syncedObjects)
-        {
-            item.UpdateFromJointAnimation();
-        }
-    }
-
+    /*
     void UpdateMovementTypeForNewPlayerState()
     {
         defaultMovement.enabled = false;
@@ -46,5 +26,42 @@ public class PlayerMovementController : MonoBehaviour
                 cartMovement.enabled = true;
                 break;
         }
+    }
+    */
+    void Update()
+    {
+        if (PlayerStateManager.Instance.GetMovementMode() == MovementMode.Targeted)
+        {
+            TargetedMovement();
+        }
+        else
+        {
+            RegularMovement();
+        }
+
+    }
+    public void RegularMovement()
+    {
+        // Get input
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        // Move relative to player's facing direction
+        Vector3 move = transform.right * h + transform.forward * v;
+
+        // Apply movement
+        controller.Move(move * moveSpeed * Time.deltaTime);
+    }
+
+    public void TargetedMovement()
+    {
+        if (target == null) return;
+        Vector3 direction = (target.position - transform.position).normalized;
+        controller.Move(direction * moveSpeed * Time.deltaTime);
+    }
+
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
     }
 }

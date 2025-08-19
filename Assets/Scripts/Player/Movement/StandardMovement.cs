@@ -3,36 +3,34 @@ using UnityEngine;
 public class StandardMovement : BaseMovementBehavior
 {
     public float moveSpeed = 5f;
-    public float acceleration = 10f;
-    public float deceleration = 8f;
 
-    private Vector3 targetVelocity;
+    private CharacterController controller;
 
-
-    void FixedUpdate()
-    {
-        Move(GetComponent<Rigidbody>());
-    }
-
-    /*HEY! Before you add ANY multiplayer networking code to you game. You are going to do this first
-    -Create Player Inputmanager
-    -Divide animation syncing between two classes
-    thank you for your time :)
-    */
     public override void Move(Rigidbody rb)
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
+        throw new System.NotImplementedException();
+    }
 
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+    }
 
-        Vector3 inputDir = (rb.transform.forward * v + rb.transform.right * h).normalized;
-        targetVelocity = inputDir * moveSpeed;
+    void Update()
+    {
 
-        Vector3 velocityChange = targetVelocity - rb.linearVelocity;
-        float accelRate = (targetVelocity.magnitude > 0.1f) ? acceleration : deceleration;
-        velocityChange = Vector3.ClampMagnitude(velocityChange, accelRate);
-        velocityChange.y = 0f;
+    }
 
-        rb.AddForce(velocityChange, ForceMode.VelocityChange);
+    public void RegularMovement()
+    {
+        // Get input
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        // Move relative to player's facing direction
+        Vector3 move = transform.right * h + transform.forward * v;
+
+        // Apply movement
+        controller.Move(move * moveSpeed * Time.deltaTime);
     }
 }

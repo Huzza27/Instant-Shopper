@@ -19,9 +19,9 @@ public class CartInteractable : MonoBehaviour, IInteractable{
 
         if (!currentShopper.GetIsPlayerHoldingSomething())
         {
-            rb.MovePosition(context.cartHandlePoint.position);
+            //rb.MovePosition(context.cartHandlePoint.position);
             currentShopper.OnShoppingCartInteract?.Invoke(cart);
-            currentShopper.SetCart(cart);
+            //currentShopper.SetCart(cart);
             PlayerStateManager.Instance.SetPlayerState(PlayerState.Cart);
         }
         else

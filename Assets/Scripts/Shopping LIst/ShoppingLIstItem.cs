@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ShoppingLIstItem : MonoBehaviour
@@ -18,6 +19,10 @@ public class ShoppingLIstItem : MonoBehaviour
     }
     public void UpdateText(ShelfItemData item, int quantity)
     {
+        if (quantity <= 0)
+        {
+            Destroy(this.gameObject);
+        }
         itemNameText.text = item.itemName;
         quantityText.text = quantity.ToString();
     }

@@ -22,10 +22,11 @@ public enum ItemShape
 }
 [System.Serializable]
 public class ShelfItemData : MonoBehaviour
-{
+{ 
     [HideInInspector] public string itemName;
     public GameObject prefab;
     [SerializeField] private SharedMeshLibrary sharedMeshLibrary;
+    public Collider collider;
     public Sprite icon;
     public float weight;
     public ItemType itemType;
@@ -36,15 +37,13 @@ public class ShelfItemData : MonoBehaviour
 
     public Vector2 UVOffset;
     public Vector2 UVScale;
-    public Vector3 BoundsSize;
     public Material sharedMaterial;
 
     void Awake()
     {
         itemName = gameObject.name;
         prefab = gameObject;
-        sharedMaterial = GetComponent<MeshRenderer>()?.material;
-
+        sharedMaterial = GetComponent<MeshRenderer>().sharedMaterial;
         MeshFilter mf = GetComponentInChildren<MeshFilter>();
         if (mf != null)
         {
@@ -55,9 +54,20 @@ public class ShelfItemData : MonoBehaviour
 
     void OnEnable()
     {
-        BoundsSize = GetComponent<Collider>().bounds.size;
+        collider = GetComponent<Collider>();
     }
 
+    public Vector3 GetBoundsSize
+    {
+        get
+        {
+            if (collider != null)
+            {
+                return collider.bounds.size;
+            }
+            return Vector3.one; // Default size if no collider is present
+        }
+    }
     public Mesh GetSharedMesh()
     {
         return sharedMeshLibrary.GetMesh(itemShape);

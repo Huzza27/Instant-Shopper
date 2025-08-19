@@ -58,6 +58,7 @@ public class ShelfPopulator : MonoBehaviour
     private Vector2 GetItemDimensions(ShelfItemData itemData)
     {
         GameObject tempInstance = Instantiate(itemData.prefab);
+        tempInstance.GetComponent<ShelfItem>().SetItemData(itemData);
         Collider itemCol = tempInstance.GetComponentInChildren<Collider>();
 
         if (!itemCol)
@@ -105,20 +106,30 @@ public class ShelfPopulator : MonoBehaviour
                 }
 
                 Vector3 spawnPos = CalculateItemPosition(instance, col, shelfForward, shelfRight, shelfBackEdge, startX, i, itemSize, idealSpacing, layer);
-
-                instance.transform.position = spawnPos;
-                instance.transform.localPosition = new Vector3(
-                    instance.transform.localPosition.x,
-                    0f,
-                    instance.transform.localPosition.z
-                );
+                FixItemPosition(spawnPos, instance);
+                SetOriginalData(selectedItem, instance.GetComponent<ShelfItem>());
 
 
 
-                ShelfItemVisualUtility.ApplySharedVisuals(instance);
-                instance.GetComponent<Collider>().enabled = false;
+                //ShelfItemVisualUtility.ApplySharedVisuals(instance);
+                //instance.GetComponent<Collider>().enabled = false;
             }
         }
+    }
+
+    public void SetOriginalData(ShelfItemData ogriginalItemData, ShelfItem currentItem)
+    {
+        currentItem.SetOriginalItemDataReference(ogriginalItemData);
+    }
+
+    public void FixItemPosition(Vector3 spawnPos, GameObject instance)
+    {
+        instance.transform.position = spawnPos;
+        instance.transform.localPosition = new Vector3(
+        instance.transform.localPosition.x,
+        0f,
+        instance.transform.localPosition.z
+        );
     }
 
     private Vector3 CalculateItemPosition(GameObject instance, Collider col, Vector3 shelfForward, Vector3 shelfRight, Vector3 shelfBackEdge, float startX, int index, Vector2 itemSize, float spacing, int layer)

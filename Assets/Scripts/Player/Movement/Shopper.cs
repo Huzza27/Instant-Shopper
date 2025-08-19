@@ -5,12 +5,16 @@ using UnityEngine.Events;
 public class Shopper : MonoBehaviour
 {
     [SerializeField] public UnityEvent<ICart> OnShoppingCartInteract;
+    [SerializeField] public UnityEvent<IDriveable> OnMountDriveable;
+    public UnityEvent<Transform> OnSetMovementTarget;
     [SerializeField] public FollowCamera cameraFollowScript;
     [SerializeField] public FPSCamera fpsCamera;
     [SerializeField] private bool isHoldingSomething;
     [SerializeField] private Inventory inventory;
     [SerializeField] private Transform itemHoldingPoint;
-    [SerializeField] ICart cart;
+    [SerializeField] private Transform handParentObject;
+    [SerializeField] private float throwForce;
+    [SerializeField] IDriveable driveable;
 
     void Start()
     {
@@ -34,7 +38,7 @@ public class Shopper : MonoBehaviour
 
     public void DisplayItemInHand(ShelfItem newItem)
     {
-        if(inventory.GetPlayerHasItem(newItem) || newItem == null)
+        if (inventory.GetPlayerHasItem(newItem) || newItem == null)
         {
             SwapItems(newItem, inventory.GetCurrentItem());
             return;
@@ -65,28 +69,59 @@ public class Shopper : MonoBehaviour
     public void MoveItemToHand(ShelfItem item)
     {
         item.transform.position = itemHoldingPoint.position;
-        item.transform.SetParent(itemHoldingPoint.transform);
+        item.transform.SetParent(handParentObject.transform);
     }
     public void TryPickupItem(ShelfItem item)
     {
         if (!inventory.CanPickUpItem()) return;
         ShelfItem newItem = item.CreateItemClone();
+        newItem.gameObject.layer = 0;
+        Rigidbody rb = newItem.gameObject.AddComponent<Rigidbody>();
+        rb.isKinematic = true;
         MoveItemToHand(newItem);
         AddItemToInventory(newItem);
     }
 
+    public void ThrowObject()
+    {
+        if (!GetIsPlayerHoldingSomething()) return;
+        ShelfItem item = GetHeldItem();
+        item.transform.SetParent(null);
+        item.ThrowItem(throwForce); // Example throw force
+        inventory.RemoveItemFromInventory(item);
+    }
+
+    public void MountDriveable(IDriveable driveable)
+    {
+        LeanTween.move(gameObject, driveable.GetSeatTransform().position, 0.3f)
+            .setEase(LeanTweenType.easeInOutQuad)
+            .setOnComplete(() =>
+            {
+                transform.rotation = Quaternion.LookRotation(driveable.GetSeatTransform().forward);
+            });
+    }
     public void RemoveItemFromInventory(ShelfItem item)
     {
         inventory.RemoveItemFromInventory(item);
     }
 
-    public void SetCart(ICart newCart)
+    public void SetDrivable(IDriveable newDrivable)
     {
-        cart = newCart;
+        driveable = newDrivable;
     }
 
-    public ICart GetCart()
+    public IDriveable GetDriveable()
     {
-        return cart;
+        return driveable;
+    }
+
+    public FPSCamera GetShopperCamera()
+    {
+        return fpsCamera;
+    }
+
+    public CharacterController GetCharacterController()
+    {
+        return GetComponent<CharacterController>();
     }
 }

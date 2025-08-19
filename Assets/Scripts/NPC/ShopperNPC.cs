@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ShopperNPC : MonoBehaviour
+public class ShopperNPC : MonoBehaviour, IShopperNPC
 {
     public Transform[] shoppingSpots; // Assign shelves in the inspector
     public float idleTime = 2f;
@@ -12,6 +12,8 @@ public class ShopperNPC : MonoBehaviour
     private enum State { Wandering, GoingToShelf, Shopping }
     private State currentState;
 
+    [SerializeField] private Animator animator;
+    [SerializeField] private GameObject ragDollObject;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -44,5 +46,17 @@ public class ShopperNPC : MonoBehaviour
         agent.SetDestination(targetSpot.position);
         idleTimer = idleTime;
         currentState = State.GoingToShelf;
+    }
+
+    public void Ragdoll()
+    {
+        animator.enabled = false;
+        ragDollObject.SetActive(true);
+        ragDollObject.GetComponent<Rigidbody>().AddForce(Vector3.one * 10f, ForceMode.Impulse);
+    }
+
+    public void UnRagdoll()
+    {
+        throw new System.NotImplementedException();
     }
 }

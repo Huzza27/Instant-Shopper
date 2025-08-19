@@ -19,7 +19,7 @@ public class ShoppingListManager : MonoBehaviour
         toggleShoppingListAction.performed += ctx => OnListUIToggled.Invoke();
 
         GenerateShoppingList(10);
-        //PopulateShoppingListUI();
+        PopulateShoppingListUI();
     }
 
     private void GenerateShoppingList(int length)
@@ -43,7 +43,7 @@ public class ShoppingListManager : MonoBehaviour
 
     private void PopulateShoppingListUI()
     {
-        foreach(ShelfItemData data in shoppingList.Keys)
+        foreach (ShelfItemData data in shoppingList.Keys)
         {
             OnItemAddedToList.Invoke(data, shoppingList[data]);
         }
@@ -60,7 +60,13 @@ public class ShoppingListManager : MonoBehaviour
             if (shoppingList[item] <= 0)
             {
                 shoppingList.Remove(item);
+                if (shoppingList.Count <= 0)
+                {
+                    //End Game?
+                }
             }
         }
     }
+    
+
 }
