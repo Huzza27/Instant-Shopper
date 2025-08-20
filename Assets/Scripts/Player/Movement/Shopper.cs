@@ -15,6 +15,7 @@ public class Shopper : MonoBehaviour
     [SerializeField] private Transform handParentObject;
     [SerializeField] private float throwForce;
     [SerializeField] IDriveable driveable;
+    [SerializeField] private CharacterController playerMotor;
 
     void Start()
     {
@@ -93,12 +94,23 @@ public class Shopper : MonoBehaviour
 
     public void MountDriveable(IDriveable driveable)
     {
+        playerMotor.enabled = false;
         LeanTween.move(gameObject, driveable.GetSeatTransform().position, 0.3f)
             .setEase(LeanTweenType.easeInOutQuad)
             .setOnComplete(() =>
             {
                 transform.rotation = Quaternion.LookRotation(driveable.GetSeatTransform().forward);
             });
+    }
+
+    //ADD MORE DYNAMIC MOUNTING BEHAVIOUR
+    public void DismountDriveable()
+    {
+        if (driveable == null) return;
+        driveable.Dismount(this, () =>
+        {
+            playerMotor.enabled = true;
+        });
     }
     public void RemoveItemFromInventory(ShelfItem item)
     {

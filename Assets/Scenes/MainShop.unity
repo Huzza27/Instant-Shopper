@@ -8360,7 +8360,7 @@ Transform:
   m_GameObject: {fileID: 758184108}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.517, y: 1.679, z: -1.232}
+  m_LocalPosition: {x: 0.543, y: 1.642, z: -1.232}
   m_LocalScale: {x: 0.1257128, y: 0.1257128, z: 0.1257128}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11191,6 +11191,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6096502614181012836, guid: e2a8dff1324208245937e8b96499d448, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2134563065}
+    - targetCorrespondingSourceObject: {fileID: 6096502614181012836, guid: e2a8dff1324208245937e8b96499d448, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2134563069}
+    - targetCorrespondingSourceObject: {fileID: 6096502614181012836, guid: e2a8dff1324208245937e8b96499d448, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2134563068}
     - targetCorrespondingSourceObject: {fileID: 7318436468338268445, guid: e2a8dff1324208245937e8b96499d448, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1219599673}
@@ -16655,7 +16661,7 @@ Transform:
   m_GameObject: {fileID: 1453930238}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.265, y: 1.679, z: -1.232}
+  m_LocalPosition: {x: -0.416, y: 1.673, z: -1.232}
   m_LocalScale: {x: 0.1257128, y: 0.1257128, z: 0.1257128}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24769,6 +24775,7 @@ MonoBehaviour:
   itemHoldingPoint: {fileID: 1903721187}
   handParentObject: {fileID: 1577795062}
   throwForce: 35
+  playerMotor: {fileID: 2134563065}
 --- !u!114 &2134563058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24852,7 +24859,7 @@ CharacterController:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Height: 1.82
   m_Radius: 0.26
@@ -24872,6 +24879,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e747218181c79ec4083eb5ce46569d9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2134563068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792117099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6e632d03f0b1a9499312edd903d3786, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouuntAction:
+    m_Name: Mouunt
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: c07bf232-9f52-4a8d-bbd1-88040f27e06a
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 651a99c9-7aaa-49a1-944c-2f280f75df1f
+      m_Path: <Keyboard>/f
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Mouunt
+      m_Flags: 0
+    m_Flags: 0
+  onMountInputDown:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2134563052}
+        m_TargetAssemblyTypeName: Shopper, Assembly-CSharp
+        m_MethodName: DismountDriveable
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &2134563069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792117099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e32d0aedcea1cb7438dcccaa9b895c77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementMode: 0
+  playerState: 0
 --- !u!1 &2145591288 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1683800760071901378, guid: a150d43941bd743479743c23e2717103, type: 3}

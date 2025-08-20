@@ -68,13 +68,16 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
     {
         //CameraTransitionManager.Instance.AnimateCameraToPosition(cartCameraMount, cameraTransitionDuration,() =>
         //{
-            MountPlayer(shopper);
+        MountPlayer(shopper);
         //});
     }
 
-    public void Dismount(Shopper shopper)
+    public void Dismount(Shopper shopper, System.Action onDismountComplete = null)
     {
-        throw new System.NotImplementedException();
+        shopper.OnSetMovementTarget?.Invoke(null); // Clear the movement target
+        DisableMotor();
+        PlayerStateManager.Instance.SetMovementMode(MovementMode.Default);
+        onDismountComplete?.Invoke();
     }
 
     public void Interact(InteractionContexzt context, Shopper currentShopper)
@@ -102,6 +105,14 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
         if (motorScript.enabled == false)
         {
             motorScript.enabled = true;
+        }
+    }
+    
+    public void DisableMotor()
+    {
+        if (motorScript.enabled == true)
+        {
+            motorScript.enabled = false;
         }
     }
 }
