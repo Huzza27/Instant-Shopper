@@ -66,10 +66,10 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
 
     void MountCamera(Shopper shopper)
     {
-        CameraTransitionManager.Instance.AnimateCameraToPosition(cartCameraMount, cameraTransitionDuration,() =>
-        {
+        //CameraTransitionManager.Instance.AnimateCameraToPosition(cartCameraMount, cameraTransitionDuration,() =>
+        //{
             MountPlayer(shopper);
-        });
+        //});
     }
 
     public void Dismount(Shopper shopper)

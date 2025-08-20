@@ -10,33 +10,37 @@ public class CartMovement : MonoBehaviour
     [SerializeField] Shopper driver;
     [SerializeField] InputAction rightMouseDown;
     [SerializeField] float cameraResetSpeed = 5f;
-
+    [SerializeField] float alignmentForce = 2f; // How strongly cart follows camera
+    [SerializeField] float maxAlignmentAngle = 45f; // Max angle before forced alignment
+    
     private bool cartCanRotate = true;
     private bool isResettingCamera = false;
-
-    // cache inputs
+    
+    // Cached inputs - now updated in FixedUpdate for consistency
     private float inputMouseX;
     private float inputV;
-
+    private float smoothMouseX; // Smoothed mouse input to reduce jitter
+    
+    // Camera alignment tracking
+    private float cameraCartAngleDifference;
+    
     void Start()
     {
         rightMouseDown.Enable();
         rightMouseDown.performed += _ => SetRotationFlagForCart(false);
         rightMouseDown.canceled += _ => SetRotationFlagForCart(true);
     }
-
-    public void SetDriver(Shopper neDriver)
+    
+    public void SetDriver(Shopper newDriver)
     {
-        driver = neDriver;
+        driver = newDriver;
     }
-
+    
     void Update()
     {
         if (!currentCart) return;
-
-        inputMouseX = Input.GetAxis("Mouse X");
-        inputV = Input.GetAxis("Vertical");
-
+        
+        // Handle camera reset animation
         if (isResettingCamera && currentCart != null)
         {
             var mount = currentCart.GetCameraMount();
@@ -46,74 +50,144 @@ public class CartMovement : MonoBehaviour
                 targetRotation,
                 Time.deltaTime * cameraResetSpeed
             );
+            
             if (Quaternion.Angle(mount.localRotation, targetRotation) < 0.1f)
             {
                 mount.localRotation = targetRotation;
                 isResettingCamera = false;
             }
         }
-
-        // 👇 New check each frame
-        CheckAndAlignCartWithCamera();
     }
-
+    
     void FixedUpdate()
     {
         if (!currentCart) return;
+        
+        // Update inputs in FixedUpdate for physics consistency
+        inputMouseX = Input.GetAxis("Mouse X");
+        inputV = Input.GetAxis("Vertical");
+        
+        // Smooth mouse input to reduce jitter
+        smoothMouseX = Mathf.Lerp(smoothMouseX, inputMouseX, Time.fixedDeltaTime * 10f);
+        
+        // Calculate angle difference between camera and cart
+        UpdateCameraCartAlignment();
+        
         HandleCartDriving();
     }
-
+    
+    private void UpdateCameraCartAlignment()
+    {
+        if (!driver) return;
+        
+        // Get the camera's forward direction (driver's forward)
+        Vector3 cameraForward = driver.transform.forward;
+        Vector3 cartForward = currentCart.transform.forward;
+        
+        // Calculate signed angle between camera and cart
+        cameraCartAngleDifference = Vector3.SignedAngle(cartForward, cameraForward, Vector3.up);
+    }
+    
     private void HandleCartDriving()
     {
-        float mouseX = Input.GetAxis("Mouse X");
-
+        Rigidbody rb = currentCart.GetCartRB();
+        
         if (cartCanRotate)
         {
-            // Cart Rotation
-            Quaternion deltaRotation = Quaternion.Euler(0f, mouseX * turnSpeed * Time.deltaTime, 0f);
-
-            Vector3 pivotToCart = currentCart.transform.position - currentCart.GetRotationPivot().position;
-            Vector3 rotatedOffset = deltaRotation * pivotToCart;
-            Vector3 newPosition = currentCart.GetRotationPivot().position + rotatedOffset;
-
-            currentCart.GetCartRB().MoveRotation(deltaRotation * currentCart.GetCartRB().rotation);
-            //currentCart.GetCartRB().MovePosition(newPosition);
+            // Cart rotation mode
+            HandleCartRotation(rb);
         }
         else
         {
-            // Camera Look Rotation
-            currentCart.GetCameraMount().localRotation *= Quaternion.Euler(0f, mouseX * turnSpeed * Time.deltaTime, 0f);
+            // Camera look mode
+            HandleCameraRotation();
         }
-
-        // Forward/Backward movement
-        float v = Input.GetAxis("Vertical");
-        Vector3 moveDir = currentCart.transform.forward * v * moveSpeed * Time.deltaTime;
-        currentCart.GetCartRB().MovePosition(currentCart.GetCartRB().position + moveDir);
+        
+        // Handle movement
+        HandleCartMovement(rb);
     }
-
+    
+    private void HandleCartRotation(Rigidbody rb)
+    {
+        float rotationInput = 0f;
+        
+        // Primary rotation from mouse input
+        if (Mathf.Abs(smoothMouseX) > 0.001f)
+        {
+            rotationInput = smoothMouseX * turnSpeed;
+        }
+        
+        // Add alignment force when camera and cart are misaligned
+        if (Mathf.Abs(cameraCartAngleDifference) > 5f) // Small dead zone
+        {
+            float alignmentInput = cameraCartAngleDifference * alignmentForce;
+            rotationInput += alignmentInput;
+        }
+        
+        // Force alignment if angle gets too large
+        if (Mathf.Abs(cameraCartAngleDifference) > maxAlignmentAngle)
+        {
+            float forceAlignmentInput = cameraCartAngleDifference * alignmentForce * 3f;
+            rotationInput = forceAlignmentInput; // Override other inputs
+        }
+        
+        // Apply rotation
+        if (Mathf.Abs(rotationInput) > 0.001f)
+        {
+            float angularVelocity = rotationInput * Time.fixedDeltaTime;
+            Quaternion deltaRotation = Quaternion.Euler(0f, angularVelocity, 0f);
+            rb.MoveRotation(rb.rotation * deltaRotation);
+        }
+    }
+    
+    private void HandleCameraRotation()
+    {
+        // When not rotating cart, apply mouse input to camera mount
+        if (Mathf.Abs(inputMouseX) > 0.001f)
+        {
+            Transform cameraMount = currentCart.GetCameraMount();
+            float cameraRotation = inputMouseX * turnSpeed * Time.fixedDeltaTime;
+            cameraMount.localRotation *= Quaternion.Euler(0f, cameraRotation, 0f);
+        }
+    }
+    
+    private void HandleCartMovement(Rigidbody rb)
+    {
+        if (Mathf.Abs(inputV) > 0.001f)
+        {
+            Vector3 moveDirection = currentCart.transform.forward * inputV;
+            Vector3 moveVelocity = moveDirection * moveSpeed;
+            
+            // Use velocity for smoother movement
+            rb.linearVelocity = new Vector3(moveVelocity.x, rb.linearVelocity.y, moveVelocity.z);
+        }
+        else
+        {
+            // Stop horizontal movement when no input
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+        }
+    }
+    
     void SetRotationFlagForCart(bool canRotate)
     {
         cartCanRotate = canRotate;
-        if (canRotate) isResettingCamera = true;
-    }
-
-    private void CheckAndAlignCartWithCamera()
-    {
-        if (!currentCart) return;
-
-        Rigidbody rb = currentCart.GetCartRB();
-        bool isIdle = rb.linearVelocity.sqrMagnitude < 0.001f && Mathf.Abs(inputMouseX) < 0.01f && Mathf.Abs(inputV) < 0.01f;
-
-        if (isIdle)
+        if (canRotate) 
         {
-            Quaternion targetRot = Quaternion.LookRotation(driver.transform.forward, Vector3.up);
-            Quaternion newRot = Quaternion.Slerp(
-                rb.rotation,
-                targetRot,
-                Time.deltaTime * cameraResetSpeed
-            );
-
-            rb.MoveRotation(newRot);
+            isResettingCamera = true;
         }
+    }
+    
+    // Optional: Debug visualization
+    void OnDrawGizmos()
+    {
+        if (!currentCart || !driver) return;
+        
+        // Draw cart forward direction in blue
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(currentCart.transform.position, currentCart.transform.forward * 2f);
+        
+        // Draw camera forward direction in red
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(currentCart.transform.position + Vector3.up * 0.5f, driver.transform.forward * 2f);
     }
 }

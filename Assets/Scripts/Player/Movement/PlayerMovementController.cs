@@ -56,8 +56,8 @@ public class PlayerMovementController : MonoBehaviour
     public void TargetedMovement()
     {
         if (target == null) return;
-        Vector3 direction = (target.position - transform.position).normalized;
-        controller.Move(direction * moveSpeed * Time.deltaTime);
+        controller.enabled = false;
+        transform.position = target.position;
     }
 
     public void SetTarget(Transform newTarget)

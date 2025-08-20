@@ -9,7 +9,7 @@ public class FollowCamera : MonoBehaviour
     [SerializeField] private float bobSpeed = 10f;
     private float bobTimer = 0f;
 
-    void LateUpdate()
+    void Update()
     {
         HandleCameraFollow();
     }
