@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class Shopper : MonoBehaviour
 {
     [SerializeField] public UnityEvent<ICart> OnShoppingCartInteract;
-    [SerializeField] public UnityEvent<IDriveable> OnMountDriveable;
+    [SerializeField] public UnityEvent<IDriveable, System.Action> OnMountDriveable;
     public UnityEvent<Transform> OnSetMovementTarget;
     [SerializeField] public FollowCamera cameraFollowScript;
     [SerializeField] public FPSCamera fpsCamera;
@@ -16,6 +16,7 @@ public class Shopper : MonoBehaviour
     [SerializeField] private float throwForce;
     [SerializeField] IDriveable driveable;
     [SerializeField] private CharacterController playerMotor;
+    [SerializeField] private float mounttransitionDuration;
 
     void Start()
     {
@@ -92,14 +93,17 @@ public class Shopper : MonoBehaviour
         inventory.RemoveItemFromInventory(item);
     }
 
-    public void MountDriveable(IDriveable driveable)
+    public void MountDriveable(IDriveable driveable, System.Action onComplete)
     {
         playerMotor.enabled = false;
-        LeanTween.move(gameObject, driveable.GetSeatTransform().position, 0.3f)
+        Transform seatTransform = driveable.GetSeatTransform();
+        Vector3 dirToSeat = new Vector3(seatTransform.position.x, transform.position.y, seatTransform.position.z);
+        LeanTween.move(gameObject, dirToSeat, mounttransitionDuration)
             .setEase(LeanTweenType.easeInOutQuad)
             .setOnComplete(() =>
             {
-                transform.rotation = Quaternion.LookRotation(driveable.GetSeatTransform().forward);
+                //transform.rotation = Quaternion.LookRotation(driveable.GetSeatTransform().forward);
+                onComplete?.Invoke(); //call back from MountPlayer in PlayerCart
             });
     }
 
@@ -109,6 +113,7 @@ public class Shopper : MonoBehaviour
         if (driveable == null) return;
         driveable.Dismount(this, () =>
         {
+            PlayerStateManager.Instance.SetPlayerState(PlayerState.Default);
             playerMotor.enabled = true;
         });
     }

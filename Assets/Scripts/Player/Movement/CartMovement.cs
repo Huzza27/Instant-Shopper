@@ -69,10 +69,12 @@ public class CartMovement : MonoBehaviour
         
         // Smooth mouse input to reduce jitter
         smoothMouseX = Mathf.Lerp(smoothMouseX, inputMouseX, Time.fixedDeltaTime * 10f);
-        
+
         // Calculate angle difference between camera and cart
-        UpdateCameraCartAlignment();
-        
+        if (cartCanRotate)
+        {
+            UpdateCameraCartAlignment();
+        }
         HandleCartDriving();
     }
     

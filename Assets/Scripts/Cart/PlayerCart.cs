@@ -22,7 +22,72 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
     public Transform GetRotationPivot() => rotationPivot;
     public Rigidbody GetCartRB() => cartRB;
     [SerializeField] private List<ShelfItem> cartIventory = new List<ShelfItem>();
+    #region MAIN_INTERACTION
+    public void Interact(InteractionContexzt context, Shopper currentShopper)
+    {
+        if (!currentShopper.GetIsPlayerHoldingSomething())
+        {
+            PlayerStateManager.Instance.SetPlayerState(PlayerState.Cart);
+            Mount(currentShopper, EnableMotor); //Enable motor is a callBack
+        }
+        else
+        {
+            PlaceItemInShoppingCart(currentShopper.GetHeldItem());
+        }
+    }
+    #endregion
+    
+    #region MOUNTING_CART
+    public void Mount(Shopper shopper, System.Action onComplete)
+    {
+        shopper.SetDrivable(this);
+        motorScript.SetDriver(shopper);
+        MountPlayer(shopper, () =>
+        {
+            PlayerStateManager.Instance.SetMovementMode(MovementMode.Targeted);
+            onComplete?.Invoke();
+        });
+    }
 
+
+    public void MountPlayer(Shopper shopper, System.Action onPlayerMountComplete = null)
+    {
+        shopper.OnSetMovementTarget?.Invoke(playerStandingPoint); //Sets target in PlayerMovement
+        shopper.OnMountDriveable?.Invoke(this, onPlayerMountComplete); //Mount Driveable in Shopper.cs passing callBack
+    }
+
+    public void EnableMotor()
+    {
+        if (motorScript.enabled == false)
+        {
+            motorScript.enabled = true;
+        }
+    }
+
+
+    #endregion
+    
+    #region DISMOUNT_CART
+    public void Dismount(Shopper shopper, System.Action onDismountComplete = null)
+    {
+        shopper.OnSetMovementTarget?.Invoke(null); // Clear the movement target
+        DisableMotor();
+        PlayerStateManager.Instance.SetMovementMode(MovementMode.Default);
+        onDismountComplete?.Invoke();
+    }
+
+    public void DisableMotor()
+    {
+        if (motorScript.enabled == true)
+        {
+            motorScript.enabled = false;
+        }
+    }
+
+
+    #endregion
+
+    #region ITEM_HANDLING
     public void OnItemPlaced(GameObject item)
     {
         item.GetComponent<IPlaceableInCart>().OnPlacedIntoCart(this.transform);
@@ -46,48 +111,11 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
         }
         cartIventory.Clear();
     }
+    #endregion
 
-
-
-    public void Mount(Shopper shopper)
+    public float GetCartVelocity()
     {
-        shopper.SetDrivable(this);
-        motorScript.SetDriver(shopper);
-        MountCamera(shopper);
-    }
-
-
-    public void MountPlayer(Shopper shopper)
-    {
-        shopper.OnSetMovementTarget?.Invoke(playerStandingPoint); //Sets the movement target in PlayerMovement
-        PlayerStateManager.Instance.SetMovementMode(MovementMode.Targeted);
-        shopper.OnMountDriveable?.Invoke(this);
-    }
-
-    void MountCamera(Shopper shopper)
-    {
-        //CameraTransitionManager.Instance.AnimateCameraToPosition(cartCameraMount, cameraTransitionDuration,() =>
-        //{
-        MountPlayer(shopper);
-        //});
-    }
-
-    public void Dismount(Shopper shopper, System.Action onDismountComplete = null)
-    {
-        shopper.OnSetMovementTarget?.Invoke(null); // Clear the movement target
-        DisableMotor();
-        PlayerStateManager.Instance.SetMovementMode(MovementMode.Default);
-        onDismountComplete?.Invoke();
-    }
-
-    public void Interact(InteractionContexzt context, Shopper currentShopper)
-    {
-        if (!currentShopper.GetIsPlayerHoldingSomething())
-        {
-            PlayerStateManager.Instance.SetPlayerState(PlayerState.Cart);
-            Mount(currentShopper);
-            EnableMotor();
-        }
+        return cartRB.linearVelocity.magnitude;
     }
 
     public void VisualHintForInteractable()
@@ -98,21 +126,5 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
     public Transform GetSeatTransform()
     {
         return playerStandingPoint; // Assuming the player stands in front of the cart
-    }
-
-    public void EnableMotor()
-    {
-        if (motorScript.enabled == false)
-        {
-            motorScript.enabled = true;
-        }
-    }
-    
-    public void DisableMotor()
-    {
-        if (motorScript.enabled == true)
-        {
-            motorScript.enabled = false;
-        }
     }
 }

@@ -1236,7 +1236,6 @@ GameObject:
   - component: {fileID: 1633056525525913394}
   - component: {fileID: 89372446981563945}
   - component: {fileID: 267971638957767443}
-  - component: {fileID: 4664179771259888282}
   m_Layer: 3
   m_Name: AI CART
   m_TagString: Untagged
@@ -1358,30 +1357,9 @@ MonoBehaviour:
   itemCollectionDelay: 2
   moveToNewShelfDelay: 4
   numItemsToCollect: 3
-  cart: {fileID: 4664179771259888282}
+  cart: {fileID: 0}
   animator: {fileID: 0}
   ragDollObject: {fileID: 0}
---- !u!114 &4664179771259888282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7911173561016091832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d08f9bf49d2dac4c9815e7622c5df5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationPivot: {fileID: 0}
-  playerStandingPoint: {fileID: 0}
-  cartCameraMount: {fileID: 0}
-  cartRB: {fileID: 0}
-  noCollideWithCart:
-    serializedVersion: 2
-    m_Bits: 0
-  itemDropInCartTransform: {fileID: 873293785547041118}
-  itemFreezeDelay: 1
 --- !u!1 &8218881290839884013
 GameObject:
   m_ObjectHideFlags: 0

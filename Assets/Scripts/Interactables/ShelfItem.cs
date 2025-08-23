@@ -19,12 +19,12 @@ public class ShelfItem : MonoBehaviour, IInteractable, IPlaceableInCart, IThrowa
         GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
     }
 
-
     public void Interact(InteractionContexzt context, Shopper currentShopper)
     {
         if (PlayerStateManager.Instance.GetPlayerState() == PlayerState.Cart)
         {
-            //currentShopper.GetCart().PlaceItemInShoppingCart(this);  -> TEMPORARY COMMENT
+            ICart cart = currentShopper.GetDriveable() as ICart;
+            cart.PlaceItemInShoppingCart(this);
             return;
         }
         currentShopper.TryPickupItem(this);

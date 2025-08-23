@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Animations.Rigging;
 
 public enum NPCState
 {
@@ -18,7 +19,7 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
     public float wanderRadius = 10f;
     public float itemCollectionDelay;
     public float moveToNewShelfDelay;
-    private NavMeshAgent agent;
+    [SerializeField] private NavMeshAgent agent;
     [SerializeField] private int numItemsToCollect;
     private int itemsCollected = 0;
     [SerializeField] private Cart cart;
@@ -26,11 +27,14 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
 
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject ragDollObject;
+    [SerializeField] private Collider mainCollider;
+    [SerializeField] private float cartImpactForceMultiplier = 1f;
+    [SerializeField] private Rig rig;
 
 
     void Start()
     {
-        Initialize();
+        //Initialize();
     }
 
     private IEnumerator ShopRoutine()
@@ -58,7 +62,7 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
         }
         OnShoppingComplete();
 
-        
+
     }
 
     public void OnShoppingComplete()
@@ -144,24 +148,54 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
         throw new System.NotImplementedException();
     }
 
-    public void Ragdoll()
-    {
-        SetState(NPCState.Ragdoll);
-        agent.isStopped = true;
-        animator.enabled = false;
-        ragDollObject.SetActive(true);
-        ragDollObject.GetComponent<Rigidbody>().AddForce(Vector3.one * 10f, ForceMode.Impulse);
-        SecurityAlertManager.Instance.AlertSecurity(transform.position);
-        Invoke(nameof(UnRagdoll), 5f); // Automatically unragdoll after 5 seconds
-    }
+
 
     public void UnRagdoll()
     {
         agent.isStopped = false;
         ragDollObject.SetActive(false);
         animator.enabled = true;
-        
+
         SetState(NPCState.Idle);
         StartCoroutine(ShopRoutine());
+    }
+
+    public void StaticRagdoll()
+    {
+        SetState(NPCState.Ragdoll);
+        agent.isStopped = true;
+        animator.enabled = false;
+        ragDollObject.SetActive(true);
+        SecurityAlertManager.Instance.AlertSecurity(transform.position);
+        Invoke(nameof(UnRagdoll), 5f); // Automatically unragdoll after 5 seconds
+    }
+
+    public void ForceRagdoll(Vector3 force)
+    {
+        SetState(NPCState.Ragdoll);
+        mainCollider.enabled = false;
+        agent.isStopped = true;
+        animator.enabled = false;
+        ragDollObject.SetActive(true);
+        ragDollObject.GetComponent<Rigidbody>().AddForce(force * cartImpactForceMultiplier, ForceMode.Impulse);
+        SecurityAlertManager.Instance.AlertSecurity(transform.position);
+        Invoke(nameof(UnRagdoll), 5f); // Automatically unragdoll after 5 seconds
+    }
+
+    public void OnMountCart(NPCCart cart)
+    {
+        agent.isStopped = true;
+        agent.enabled = false;
+        transform.SetParent(cart.NPCStandingPoint);
+        transform.localRotation = Quaternion.identity;
+        MoveHandsToCartHandles();
+    }
+
+    public void MoveHandsToCartHandles()
+    {
+        LeanTween.value(0, 1, 0.5f).setOnUpdate((float val) =>
+        {
+            rig.weight = val;
+        });
     }
 }

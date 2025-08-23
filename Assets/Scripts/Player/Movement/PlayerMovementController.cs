@@ -9,25 +9,9 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float targetedMoveSpeed = 10f;
     private Transform target;
 
-    //PlayerStateManager.Instance.OnPlayerStateChanged += UpdateMovementTypeForNewPlayerState;
+    [SerializeField] private Vector2 moveInput;
 
-    /*
-    void UpdateMovementTypeForNewPlayerState()
-    {
-        defaultMovement.enabled = false;
-        cartMovement.enabled = false;
 
-        switch (PlayerStateManager.Instance.GetPlayerState())
-        {
-            case PlayerState.Default:
-                defaultMovement.enabled = true;
-                break;
-            case PlayerState.Cart:
-                cartMovement.enabled = true;
-                break;
-        }
-    }
-    */
     void Update()
     {
         if (PlayerStateManager.Instance.GetMovementMode() == MovementMode.Targeted)
@@ -42,16 +26,15 @@ public class PlayerMovementController : MonoBehaviour
     }
     public void RegularMovement()
     {
-        // Get input
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
+        // input as local direction
+        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
 
-        // Move relative to player's facing direction
-        Vector3 move = transform.right * h + transform.forward * v;
+        // convert local → world using the player’s transform
+        move = transform.TransformDirection(move);
 
-        // Apply movement
         controller.Move(move * moveSpeed * Time.deltaTime);
     }
+
 
     public void TargetedMovement()
     {
@@ -64,4 +47,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         target = newTarget;
     }
+
+    public void HandleMove(Vector2 input) => moveInput = input;
+    public void StopMove() => moveInput = Vector2.zero;
 }

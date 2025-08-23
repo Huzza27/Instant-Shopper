@@ -327,11 +327,11 @@ Transform:
   m_GameObject: {fileID: 6688533324734578016}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.022}
+  m_LocalPosition: {x: 0, y: -0.834, z: -1.0220003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2994666853462295534}
+  m_Father: {fileID: 3084845421877165144}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7015894883607144920
 GameObject:
@@ -447,7 +447,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.834, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3863892655213058464}
   m_Father: {fileID: 350076475815582714}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &3739619310075977624
@@ -574,7 +575,6 @@ Transform:
   m_Children:
   - {fileID: 350076475815582714}
   - {fileID: 4408873203728359251}
-  - {fileID: 3863892655213058464}
   - {fileID: 2311529670278562887}
   - {fileID: 5935740112437871326}
   - {fileID: 5147590369969468266}
@@ -674,11 +674,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemPlacer: {fileID: 6842697119386665868}
-  itemDropInCartTransform: {fileID: 2285061771422453804}
+  itemGrid: {fileID: 0}
   playerStandingPoint: {fileID: 5147590369969468266}
   cartCameraMount: {fileID: 5935740112437871326}
   rotationPivot: {fileID: 3863892655213058464}
   cartRB: {fileID: 6972603532706347130}
+  motorScript: {fileID: 0}
+  cameraTransitionDuration: 0
+  cartIventory: []
 --- !u!114 &6842697119386665868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -695,7 +698,6 @@ MonoBehaviour:
   noCollideWithCart:
     serializedVersion: 2
     m_Bits: 512
-  spawnerOverride: {fileID: 0}
 --- !u!1001 &6650029264605594071
 PrefabInstance:
   m_ObjectHideFlags: 0

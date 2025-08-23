@@ -59,4 +59,14 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC
     {
         throw new System.NotImplementedException();
     }
+
+    public void StaticRagdoll()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void ForceRagdoll(Vector3 force)
+    {
+        throw new System.NotImplementedException();
+    }
 }
