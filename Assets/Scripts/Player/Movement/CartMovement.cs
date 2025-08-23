@@ -12,6 +12,7 @@ public class CartMovement : MonoBehaviour
     [SerializeField] float cameraResetSpeed = 5f;
     [SerializeField] float alignmentForce = 2f; // How strongly cart follows camera
     [SerializeField] float maxAlignmentAngle = 45f; // Max angle before forced alignment
+    [SerializeField] bool isNPCDriver = false;
     
     private bool cartCanRotate = true;
     private bool isResettingCamera = false;
@@ -35,11 +36,16 @@ public class CartMovement : MonoBehaviour
     {
         driver = newDriver;
     }
+
+    public void SetNPCDriverFlag()
+    {
+        isNPCDriver = true;
+    }
     
     void Update()
     {
+
         if (!currentCart) return;
-        
         // Handle camera reset animation
         if (isResettingCamera && currentCart != null)
         {
@@ -50,7 +56,7 @@ public class CartMovement : MonoBehaviour
                 targetRotation,
                 Time.deltaTime * cameraResetSpeed
             );
-            
+
             if (Quaternion.Angle(mount.localRotation, targetRotation) < 0.1f)
             {
                 mount.localRotation = targetRotation;
@@ -62,6 +68,12 @@ public class CartMovement : MonoBehaviour
     void FixedUpdate()
     {
         if (!currentCart) return;
+
+        if(isNPCDriver)
+        {
+            HandleNPCCartDriving();
+            return;
+        }
         
         // Update inputs in FixedUpdate for physics consistency
         inputMouseX = Input.GetAxis("Mouse X");
@@ -77,15 +89,30 @@ public class CartMovement : MonoBehaviour
         }
         HandleCartDriving();
     }
+
+    public void HandleNPCCartDriving()
+    {
+        Vector3 targetPos = currentCart.GetNavMeshAgent().transform.position;
+        targetPos.y = 0f;
+        Quaternion targetRot = currentCart.GetNavMeshAgent().transform.rotation;
+
+        // Smooth follow with interpolation
+        Vector3 newPos = Vector3.MoveTowards(currentCart.transform.position, targetPos, moveSpeed * Time.fixedDeltaTime);
+        Quaternion newRot = Quaternion.RotateTowards(currentCart.transform.rotation, targetRot, turnSpeed * Time.fixedDeltaTime);
+
+        currentCart.GetCartRB().MovePosition(newPos);
+        currentCart.GetCartRB().MoveRotation(newRot);
+    }
+
     
     private void UpdateCameraCartAlignment()
     {
         if (!driver) return;
-        
+
         // Get the camera's forward direction (driver's forward)
         Vector3 cameraForward = driver.transform.forward;
         Vector3 cartForward = currentCart.transform.forward;
-        
+
         // Calculate signed angle between camera and cart
         cameraCartAngleDifference = Vector3.SignedAngle(cartForward, cameraForward, Vector3.up);
     }

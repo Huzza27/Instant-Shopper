@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
 {
+    [SerializeField] private bool isBeingDriven;
+    [Header("PLAYER")]
     [SerializeField] private CartItemPlacer itemPlacer;
     [SerializeField] private Transform itemGrid;
     [SerializeField] private Transform playerStandingPoint;
@@ -11,6 +14,8 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
     [SerializeField] Transform rotationPivot;
     [SerializeField] private Rigidbody cartRB;
     [SerializeField] CartMovement motorScript;
+    [Header("NPC")]
+    [SerializeField] private Transform npcAgent;
 
     [SerializeField] private float cameraTransitionDuration;
 
@@ -20,9 +25,10 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
     public Transform GetCameraMount() => cartCameraMount;
     public Transform GetStandingPoint() => playerStandingPoint;
     public Transform GetRotationPivot() => rotationPivot;
+    public NavMeshAgent GetNavMeshAgent() => npcAgent.GetComponent<NavMeshAgent>();
     public Rigidbody GetCartRB() => cartRB;
     [SerializeField] private List<ShelfItem> cartIventory = new List<ShelfItem>();
-    #region MAIN_INTERACTION
+    #region PLAYER_INTERACTION
     public void Interact(InteractionContexzt context, Shopper currentShopper)
     {
         if (!currentShopper.GetIsPlayerHoldingSomething())
@@ -36,8 +42,8 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
         }
     }
     #endregion
-    
-    #region MOUNTING_CART
+
+    #region PLAYER_MOUNTING_CART
     public void Mount(Shopper shopper, System.Action onComplete)
     {
         shopper.SetDrivable(this);
@@ -66,8 +72,8 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
 
 
     #endregion
-    
-    #region DISMOUNT_CART
+
+    #region PLAYER_DISMOUNT_CART
     public void Dismount(Shopper shopper, System.Action onDismountComplete = null)
     {
         shopper.OnSetMovementTarget?.Invoke(null); // Clear the movement target
@@ -87,7 +93,7 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
 
     #endregion
 
-    #region ITEM_HANDLING
+    #region PLAYER_ITEM_HANDLING
     public void OnItemPlaced(GameObject item)
     {
         item.GetComponent<IPlaceableInCart>().OnPlacedIntoCart(this.transform);
@@ -112,7 +118,6 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
         cartIventory.Clear();
     }
     #endregion
-
     public float GetCartVelocity()
     {
         return cartRB.linearVelocity.magnitude;
@@ -127,4 +132,16 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
     {
         return playerStandingPoint; // Assuming the player stands in front of the cart
     }
+
+    public void NPCMount(IShopperNPC npc)
+    {
+        throw new System.NotImplementedException();
+    }
+    
+    public void SetNPCDriverFlag(bool isNPCDriver)
+    {
+        motorScript.enabled = true;
+        motorScript.SetNPCDriverFlag();
+    }
+
 }

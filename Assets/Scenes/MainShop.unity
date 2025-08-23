@@ -1556,9 +1556,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 961008136403998415, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
+      propertyPath: npcAgent
+      value: 
+      objectReference: {fileID: 1619655846}
     - target: {fileID: 1628725290262419341, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
       propertyPath: m_Name
       value: Cart 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4325657215826608473, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 6877353726441415754, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.85858
+      objectReference: {fileID: 0}
+    - target: {fileID: 6877353726441415754, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.85858
+      objectReference: {fileID: 0}
+    - target: {fileID: 6877353726441415754, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.85858
       objectReference: {fileID: 0}
     - target: {fileID: 6877353726441415754, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1600,16 +1620,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8238122106824462994, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8287305703908720914, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1628725290262419341, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
-      insertIndex: 3
-      addedObject: {fileID: 924301959}
-    - targetCorrespondingSourceObject: {fileID: 2473717585330420618, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1258249713}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6877353726441415754, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 1619655846}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
 --- !u!64 &142629345
 MeshCollider:
@@ -16130,37 +16155,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1628725290262419341, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
   m_PrefabInstance: {fileID: 141297113}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &924301959
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+--- !u!4 &924301961 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6877353726441415754, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
+  m_PrefabInstance: {fileID: 141297113}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 924301952}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41f69011fd725434e82c56f0b0515f04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  testCart: {fileID: 1509526694}
-  NPCAgent: {fileID: 938448524}
-  cartAgent: {fileID: 1258249713}
-  NPCStandingPoint: {fileID: 1509526694}
-  OnMountCart:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 938448523}
-        m_TargetAssemblyTypeName: SimpleNPC, Assembly-CSharp
-        m_MethodName: OnMountCart
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &924477481 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1703473491307067327, guid: 8b80e303eddf2cc459a9e1a8ce73284e, type: 3}
@@ -16567,8 +16566,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 938448522}
-  - component: {fileID: 938448523}
   - component: {fileID: 938448524}
+  - component: {fileID: 938448525}
   m_Layer: 0
   m_Name: SHOPPER_NPC
   m_TagString: Untagged
@@ -16593,29 +16592,6 @@ Transform:
   - {fileID: 977355431}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &938448523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 938448521}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41a772be9a8619d40924fa4cebafc978, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wanderRadius: 10
-  itemCollectionDelay: 0
-  moveToNewShelfDelay: 0
-  agent: {fileID: 938448524}
-  numItemsToCollect: 0
-  cart: {fileID: 0}
-  animator: {fileID: 682346283}
-  ragDollObject: {fileID: 511131951}
-  mainCollider: {fileID: 682346284}
-  cartImpactForceMultiplier: 40
-  rig: {fileID: 1983301573}
 --- !u!195 &938448524
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -16625,8 +16601,8 @@ NavMeshAgent:
   m_GameObject: {fileID: 938448521}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
+  m_Radius: 0.38
+  m_Speed: 3
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -16638,6 +16614,29 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &938448525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 938448521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5bc5927a8fe8f4aa8482d3b21932d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wanderRadius: 10
+  itemCollectionDelay: 0
+  moveToNewShelfDelay: 0
+  agent: {fileID: 938448524}
+  numItemsToCollect: 5
+  cartObj: {fileID: 924301952}
+  animator: {fileID: 682346283}
+  ragDollObject: {fileID: 511131951}
+  mainCollider: {fileID: 682346284}
+  cartImpactForceMultiplier: 30
+  rig: {fileID: 1983301573}
 --- !u!1001 &948088865
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19831,33 +19830,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.62
   m_Center: {x: 0, y: 0.24, z: 0}
---- !u!1 &1258249712 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2473717585330420618, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
-  m_PrefabInstance: {fileID: 141297113}
-  m_PrefabAsset: {fileID: 0}
---- !u!195 &1258249713
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1258249712}
-  m_Enabled: 0
-  m_AgentTypeID: 0
-  m_Radius: 1.09
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0.48
-  m_WalkableMask: 0
-  m_ObstacleAvoidanceType: 4
 --- !u!1001 &1261744351
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23090,11 +23062,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6723292261639095336, guid: 614ca13ab34a885449b1ee3e4748be88, type: 3}
   m_PrefabInstance: {fileID: 5682881194007997470}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1509526694 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 216609631884643585, guid: 5947a292a8a5a4e4bb3f842d5c7ad4f5, type: 3}
-  m_PrefabInstance: {fileID: 141297113}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1511224120 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -9070493210130169274, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
@@ -25843,6 +25810,84 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -6803169544883306252, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
   m_PrefabInstance: {fileID: 1605935217}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1619655845
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1619655846}
+  - component: {fileID: 1619655848}
+  - component: {fileID: 1619655847}
+  m_Layer: 3
+  m_Name: SHOPPER_NPC_BRAIN
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1619655846
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619655845}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.54}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 924301961}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1619655847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619655845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41a772be9a8619d40924fa4cebafc978, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wanderRadius: 10
+  itemCollectionDelay: 0
+  moveToNewShelfDelay: 0
+  agent: {fileID: 1619655848}
+  numItemsToCollect: 0
+  cartObj: {fileID: 924301952}
+  animator: {fileID: 0}
+  ragDollObject: {fileID: 0}
+  mainCollider: {fileID: 0}
+  cartImpactForceMultiplier: 1
+  rig: {fileID: 0}
+--- !u!195 &1619655848
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619655845}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0.7
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &1636502172 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4908425040808176104, guid: c915481796ca04d42be56e172e029318, type: 3}

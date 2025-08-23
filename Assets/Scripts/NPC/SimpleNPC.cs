@@ -6,14 +6,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 
-public enum NPCState
-{
-    Idle,
-    Shopping,
-    Ragdoll
-}
 
-public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
+public class SimpleNPC : MonoBehaviour, INPCBehavior
 {
     private NPCState currentState = NPCState.Idle;
     public float wanderRadius = 10f;
@@ -22,7 +16,8 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private int numItemsToCollect;
     private int itemsCollected = 0;
-    [SerializeField] private Cart cart;
+    [SerializeField] private GameObject cartObj;
+    private ICart cart;
     private List<ShelfItem> shopperInventory = new List<ShelfItem>();
 
     [SerializeField] private Animator animator;
@@ -31,11 +26,6 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
     [SerializeField] private float cartImpactForceMultiplier = 1f;
     [SerializeField] private Rig rig;
 
-
-    void Start()
-    {
-        //Initialize();
-    }
 
     private IEnumerator ShopRoutine()
     {
@@ -136,6 +126,7 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
     public void Initialize()
     {
         agent = GetComponent<NavMeshAgent>();
+        cart = cartObj.GetComponent<ICart>();
         StartCoroutine(ShopRoutine());
     }
 
@@ -182,14 +173,6 @@ public class SimpleNPC : MonoBehaviour, INPCBehavior, IShopperNPC
         Invoke(nameof(UnRagdoll), 5f); // Automatically unragdoll after 5 seconds
     }
 
-    public void OnMountCart(NPCCart cart)
-    {
-        agent.isStopped = true;
-        agent.enabled = false;
-        transform.SetParent(cart.NPCStandingPoint);
-        transform.localRotation = Quaternion.identity;
-        MoveHandsToCartHandles();
-    }
 
     public void MoveHandsToCartHandles()
     {
