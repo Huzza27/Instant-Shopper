@@ -26,12 +26,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 269761573624499228}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.162, y: 0.738, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.16200177, y: 0.73799986, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6877353726441415754}
+  m_Father: {fileID: 4911016559280311495}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &8238122106824462994
 BoxCollider:
@@ -315,6 +315,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 638254315135875379}
   - {fileID: 6412026300095494366}
   - {fileID: 4999022731400475704}
   - {fileID: 3572899790625891414}
@@ -368,7 +369,6 @@ Transform:
   - {fileID: 1467958531969886862}
   - {fileID: 7669283668242138088}
   - {fileID: 7169098919535195122}
-  - {fileID: 638254315135875379}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &452615498750576926
@@ -460,6 +460,7 @@ MonoBehaviour:
   cameraResetSpeed: 5
   alignmentForce: 2
   maxAlignmentAngle: 45
+  isNPCDriver: 0
 --- !u!114 &961008136403998415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -472,6 +473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1e29f2ad4aac4459d10fa8c1307d7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBeingDriven: 0
   itemPlacer: {fileID: 6981592790722286655}
   itemGrid: {fileID: 1995952556968474531}
   playerStandingPoint: {fileID: 216609631884643585}
@@ -479,6 +481,7 @@ MonoBehaviour:
   rotationPivot: {fileID: 0}
   cartRB: {fileID: 7783465616698948090}
   motorScript: {fileID: 5326527197231617497}
+  npcAgent: {fileID: 0}
   cameraTransitionDuration: 0.5
   cartIventory: []
 --- !u!114 &6981592790722286655

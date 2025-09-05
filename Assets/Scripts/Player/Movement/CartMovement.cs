@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
@@ -13,7 +14,7 @@ public class CartMovement : MonoBehaviour
     [SerializeField] float alignmentForce = 2f; // How strongly cart follows camera
     [SerializeField] float maxAlignmentAngle = 45f; // Max angle before forced alignment
     [SerializeField] bool isNPCDriver = false;
-    
+    [SerializeField] bool NPC_canMove = true;
     private bool cartCanRotate = true;
     private bool isResettingCamera = false;
     
@@ -67,14 +68,6 @@ public class CartMovement : MonoBehaviour
     
     void FixedUpdate()
     {
-        if (!currentCart) return;
-
-        if(isNPCDriver)
-        {
-            HandleNPCCartDriving();
-            return;
-        }
-        
         // Update inputs in FixedUpdate for physics consistency
         inputMouseX = Input.GetAxis("Mouse X");
         inputV = Input.GetAxis("Vertical");
@@ -92,16 +85,58 @@ public class CartMovement : MonoBehaviour
 
     public void HandleNPCCartDriving()
     {
-        Vector3 targetPos = currentCart.GetNavMeshAgent().transform.position;
-        targetPos.y = 0f;
-        Quaternion targetRot = currentCart.GetNavMeshAgent().transform.rotation;
+        if (!NPC_canMove) return;
+        Rigidbody rb = currentCart.GetCartRB();
+        NavMeshAgent agent = currentCart.GetNavMeshAgent();
 
-        // Smooth follow with interpolation
-        Vector3 newPos = Vector3.MoveTowards(currentCart.transform.position, targetPos, moveSpeed * Time.fixedDeltaTime);
-        Quaternion newRot = Quaternion.RotateTowards(currentCart.transform.rotation, targetRot, turnSpeed * Time.fixedDeltaTime);
+        if (!agent.hasPath || agent.path.corners.Length == 0)
+        {
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            return;
+        }
 
-        currentCart.GetCartRB().MovePosition(newPos);
-        currentCart.GetCartRB().MoveRotation(newRot);
+        // Find current target corner
+        Vector3[] corners = agent.path.corners;
+        Vector3 corner = corners[0];
+        float minDist = float.MaxValue;
+
+        // Optional: pick closest valid corner ahead of us
+        foreach (var c in corners)
+        {
+            float d = Vector3.Distance(rb.position, c);
+            if (d < minDist)
+            {
+                minDist = d;
+                corner = c;
+            }
+        }
+
+        Vector3 toCorner = corner - rb.position;
+        toCorner.y = 0;
+
+        if (toCorner.magnitude < 0.2f) // close enough to this corner
+        {
+            // force agent to recalc so next frame we get the next corner
+            agent.nextPosition = rb.position;
+            return;
+        }
+
+        // Drive toward the corner
+        Vector3 desiredVel = toCorner.normalized * moveSpeed;
+        Vector3 newVel = Vector3.Lerp(rb.linearVelocity, desiredVel, 0.1f);
+        rb.linearVelocity = new Vector3(newVel.x, rb.linearVelocity.y, newVel.z);
+
+        if (desiredVel.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(desiredVel.normalized, Vector3.up);
+            rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, targetRot, turnSpeed * Time.fixedDeltaTime));
+        }
+    }
+
+
+    public void SetNPCMovementFlag(bool toggle)
+    {
+        NPC_canMove = toggle;
     }
 
     

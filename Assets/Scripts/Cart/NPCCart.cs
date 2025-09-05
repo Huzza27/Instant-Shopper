@@ -41,6 +41,6 @@ public class NPCCart : MonoBehaviour
         OnMountCart?.Invoke(this);
         cartAgent.enabled = true;
     }
-    
 
+    
 }

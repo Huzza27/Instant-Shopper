@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
+using UnityEngine.Rendering;
+using UnityEngine.UI;
+public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable, ICartCollidable
 {
-    [SerializeField] private bool isBeingDriven;
+    [Header("FLAGS")]
+    [SerializeField] private bool isPlayerDriven = false;
     [Header("PLAYER")]
+    [SerializeField] Shopper playerDriver;
     [SerializeField] private CartItemPlacer itemPlacer;
     [SerializeField] private Transform itemGrid;
     [SerializeField] private Transform playerStandingPoint;
@@ -16,16 +21,20 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
     [SerializeField] CartMovement motorScript;
     [Header("NPC")]
     [SerializeField] private Transform npcAgent;
-
+    [SerializeField] ShopperNPC npcDriver;
     [SerializeField] private float cameraTransitionDuration;
 
     public Transform GetDropTransform() => itemGrid;
+    public ShopperNPC GetNPCDriver() => npcDriver;
     public Transform GetCartTransform() => this.transform;
-
+    public Shopper GetPlayerDriver() => playerDriver;
     public Transform GetCameraMount() => cartCameraMount;
     public Transform GetStandingPoint() => playerStandingPoint;
     public Transform GetRotationPivot() => rotationPivot;
     public NavMeshAgent GetNavMeshAgent() => npcAgent.GetComponent<NavMeshAgent>();
+    public void SetIsPlayerDriven(bool value) => isPlayerDriven = value;
+    public void SetPlayerDriver(Shopper player) => playerDriver = player;
+    public void SetNPCDriver(ShopperNPC npc) => npcDriver = npc;
     public Rigidbody GetCartRB() => cartRB;
     [SerializeField] private List<ShelfItem> cartIventory = new List<ShelfItem>();
     #region PLAYER_INTERACTION
@@ -137,11 +146,36 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable
     {
         throw new System.NotImplementedException();
     }
-    
-    public void SetNPCDriverFlag(bool isNPCDriver)
+
+    public void OnCartCollision(Vector3 impactForce, GameObject objCollidedWith)
     {
-        motorScript.enabled = true;
-        motorScript.SetNPCDriverFlag();
+        Debug.Log("CART COLLISION LOGIC RUNNING ON " + gameObject.name + " CHECKING COLLISION DATA FOR " + objCollidedWith.name);
+        if (!npcDriver.IsEnoughForceToBeStunned(impactForce)) return;
+        if (!npcDriver.GetIsStunned() && !isPlayerDriven)
+        {
+            ToggleRigidbody();
+            DisableAgentOnStun(objCollidedWith);
+        }
     }
 
+    public void ToggleRigidbody()
+    {
+        cartRB.isKinematic = cartRB.isKinematic;
+    }
+
+    public void DisableAgentOnStun(GameObject objCollidedWith)
+    {
+        GetNavMeshAgent().updatePosition = false;
+        GetNavMeshAgent().updateRotation = false;
+        npcDriver.StunNPC(objCollidedWith);
+    }
+
+    public void ReEnableAgentAfterStun()
+    {
+        Debug.Log("Re-enabling cart navigation");    
+        cartRB.isKinematic = true;
+        GetNavMeshAgent().updatePosition = true;
+        GetNavMeshAgent().updateRotation = true;
+        GetNavMeshAgent().SetDestination(npcDriver.GetLastNavMeshAgentTarget().position);
+    }
 }

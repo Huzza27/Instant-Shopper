@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.Events;
 
 public enum NPCState
 {
@@ -11,10 +13,10 @@ public enum NPCState
     Ragdoll
 }
 
-public class ShopperNPC : MonoBehaviour, IShopperNPC
+public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable
 {
     private NPCState currentState = NPCState.Idle;
-public float wanderRadius = 10f;
+    public float wanderRadius = 10f;
     public float itemCollectionDelay;
     public float moveToNewShelfDelay;
     [SerializeField] private NavMeshAgent agent;
@@ -28,7 +30,16 @@ public float wanderRadius = 10f;
     [SerializeField] private Collider mainCollider;
     [SerializeField] private float cartImpactForceMultiplier = 1f;
     [SerializeField] private Rig rig;
+    [SerializeField] private Transform lastNavMeshTarget;
+    [SerializeField] private bool isStunned = false;
+    [SerializeField] private Transform neckTransform, stunLookAtTarget;
+    [SerializeField] private float minForceForStun;
+    [SerializeField] private GameObject stunUI;
+    [SerializeField] UnityEvent<bool> OnShopperStun;
     bool isDrivingCart = false;
+    public Transform GetLastNavMeshAgentTarget() => lastNavMeshTarget;
+    public bool GetIsStunned() => isStunned;
+    [SerializeField] private float delayForStun = 7f;
 
     void Start()
     {
@@ -43,13 +54,29 @@ public float wanderRadius = 10f;
             StartCoroutine(ShopRoutine());
         });
     }
-    private void Update() {
+    private void Update()
+    {
         if (isDrivingCart)
         {
             Vector3 move = new Vector3(cart.GetStandingPoint().position.x, transform.position.y, cart.GetStandingPoint().position.z);
             transform.position = move;
             transform.rotation = cart.GetCartTransform().rotation;
         }
+    }
+
+    private void LateUpdate()
+    {
+        if (isStunned)
+        {
+            LookAtTarget(stunLookAtTarget);
+        }
+    }
+
+    public void LookAtTarget(Transform target)
+    {
+        if (target == null) return;
+        Vector3 dir = target.position;
+        neckTransform.LookAt(dir);
     }
 
     #region CART
@@ -59,18 +86,41 @@ public float wanderRadius = 10f;
         StartCoroutine(MoveToCart(() =>
         {
             MountCart(cart, onComplete);
+            SetNPCDriverForCart();
         }));
+    }
+
+    public void SetNPCDriverForCart()
+    {
+        var playerCart = cart as PlayerCart;
+        if (playerCart != null)
+        {
+            playerCart.SetNPCDriver(this);
+        }
     }
 
     public IEnumerator MoveToCart(System.Action onArrive)
     {
-        agent.SetDestination(cart.GetStandingPoint().position);
+        Vector3 target = cart.GetStandingPoint().position;
+        float threshold = 0.5f; // tweak as needed
+
+        // If already close enough, skip moving
+        if (Vector3.Distance(transform.position, target) <= threshold)
+        {
+            Debug.Log("Already at cart, skipping movement");
+            onArrive?.Invoke();
+            yield break;
+        }
+
+        agent.SetDestination(target);
         Debug.Log("Path to cart set");
+
         while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
         {
             Debug.Log("Moving to cart...");
             yield return null;
         }
+
         Debug.Log("Arrived at cart");
         onArrive?.Invoke();
     }
@@ -83,8 +133,7 @@ public float wanderRadius = 10f;
         transform.localRotation = Quaternion.identity;
         MoveHandsToCartHandles();
         agent = cart.GetNavMeshAgent();
-        agent.transform.SetParent(null);
-        cartObj.GetComponent<PlayerCart>().SetNPCDriverFlag(true);
+        agent.enabled = true;
         onComplete?.Invoke(); //Starts shopping routine in Initialize
     }
     #endregion
@@ -100,13 +149,16 @@ public float wanderRadius = 10f;
         {
             Shelf shelf = GetShelf();
             ShelfSlot slot = GetNewSlot(shelf);
+            lastNavMeshTarget = slot.GetAIShelfTransform();
             MoveToNewPosition(slot.GetAIShelfTransform());
 
             // Wait until the agent arrives
-            while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
+            while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance ||
+                Vector3.Distance(transform.position, slot.GetAIShelfTransform().position) > agent.stoppingDistance)
             {
                 yield return null;
             }
+
 
             // Now collect items
             CollectItemsOffShelf(slot);
@@ -187,7 +239,7 @@ public float wanderRadius = 10f;
     }
     #endregion
 
-   
+
 
     public void SetState(NPCState state)
     {
@@ -199,6 +251,46 @@ public float wanderRadius = 10f;
     }
 
 
+    public void StunNPC(GameObject objCollidedWith)
+    {
+        Debug.Log("NPC Stunned");
+        
+        ToggleAlertUI();
+        stunLookAtTarget = GetShopperFromCartCollision(objCollidedWith);
+        isStunned = true;
+        animator.SetBool("isStunned", true);
+        //Look at player somehow
+        Invoke(nameof(ReEnableNPC), delayForStun);
+    }
+
+    public void ToggleAlertUI()
+    {
+        stunUI.SetActive(!stunUI.activeSelf);
+    }
+
+    Transform GetShopperFromCartCollision(GameObject objCollidedWith)
+    {
+        GameObject rootObj = objCollidedWith.transform.root.gameObject;
+        PlayerCart cart = rootObj.GetComponent<PlayerCart>();
+        Shopper player = cart.GetPlayerDriver();
+        if (player == null)
+        {
+            return null;
+        }
+        return player.gameObject.transform;
+    }
+
+    public void ReEnableNPC()
+    {
+        ToggleAlertUI();
+        Debug.Log("NPC Returning To Cart");
+        StartCoroutine(MoveToCart(() =>
+        {
+            animator.SetBool("isStunned", false);
+            (cart as PlayerCart).ReEnableAgentAfterStun();
+        }));
+    }
+
 
     public void UnRagdoll()
     {
@@ -207,7 +299,17 @@ public float wanderRadius = 10f;
         animator.enabled = true;
         mainCollider.enabled = true;
         SetState(NPCState.Idle);
+        ToggleCartRB();
         //StartCoroutine(ShopRoutine());
+    }
+
+    public bool IsEnoughForceToBeStunned(Vector3 force)
+    {
+        if (force.magnitude >= minForceForStun)
+        {
+            return true;
+        }
+        return false;
     }
 
     public void StaticRagdoll()
@@ -239,5 +341,23 @@ public float wanderRadius = 10f;
         {
             rig.weight = val;
         });
+    }
+
+    public void OnCartCollision(Vector3 impactForce, GameObject objCollidedWith)
+    {
+        ToggleCartRB();
+        ForceRagdoll(impactForce);
+    }
+
+    void ToggleCartRB()
+    {
+        if (cart != null)
+        {
+            var playerCart = cart as PlayerCart;
+            if (playerCart != null)
+            {
+                playerCart.ToggleRigidbody();
+            }
+        }
     }
 }
