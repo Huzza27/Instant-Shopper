@@ -11,7 +11,6 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable, ICart
     [Header("FLAGS")]
     [SerializeField] private bool isPlayerDriven = false;
     [Header("PLAYER")]
-    [SerializeField] Shopper playerDriver;
     [SerializeField] private CartItemPlacer itemPlacer;
     [SerializeField] private Transform itemGrid;
     [SerializeField] private Transform playerStandingPoint;
@@ -21,21 +20,17 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable, ICart
     [SerializeField] CartMovement motorScript;
     [Header("NPC")]
     [SerializeField] private Transform npcAgent;
-    [SerializeField] ShopperNPC npcDriver;
     [SerializeField] private float cameraTransitionDuration;
-
+    [SerializeField] IDriver driver;
     public Transform GetDropTransform() => itemGrid;
-    public ShopperNPC GetNPCDriver() => npcDriver;
     public Transform GetCartTransform() => this.transform;
-    public Shopper GetPlayerDriver() => playerDriver;
     public Transform GetCameraMount() => cartCameraMount;
     public Transform GetStandingPoint() => playerStandingPoint;
     public Transform GetRotationPivot() => rotationPivot;
     public NavMeshAgent GetNavMeshAgent() => npcAgent.GetComponent<NavMeshAgent>();
-    public void SetIsPlayerDriven(bool value) => isPlayerDriven = value;
-    public void SetPlayerDriver(Shopper player) => playerDriver = player;
-    public void SetNPCDriver(ShopperNPC npc) => npcDriver = npc;
     public Rigidbody GetCartRB() => cartRB;
+    public IDriver GetDriver() => driver;
+    public void SetDriver(IDriver newDriver) => driver = newDriver; 
     [SerializeField] private List<ShelfItem> cartIventory = new List<ShelfItem>();
     #region PLAYER_INTERACTION
     public void Interact(InteractionContexzt context, Shopper currentShopper)
@@ -43,7 +38,7 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable, ICart
         if (!currentShopper.GetIsPlayerHoldingSomething())
         {
             PlayerStateManager.Instance.SetPlayerState(PlayerState.Cart);
-            Mount(currentShopper, EnableMotor); //Enable motor is a callBack
+            Mount(currentShopper as IDriver, EnableMotor); //Enable motor is a callBack
         }
         else
         {
@@ -53,10 +48,10 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable, ICart
     #endregion
 
     #region PLAYER_MOUNTING_CART
-    public void Mount(Shopper shopper, System.Action onComplete)
+    public void Mount(IDriver shopper, System.Action onComplete)
     {
         shopper.SetDrivable(this);
-        motorScript.SetDriver(shopper);
+        motorScript.SetDriver(shopper as IDriver);
         MountPlayer(shopper, () =>
         {
             PlayerStateManager.Instance.SetMovementMode(MovementMode.Targeted);
@@ -65,8 +60,9 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable, ICart
     }
 
 
-    public void MountPlayer(Shopper shopper, System.Action onPlayerMountComplete = null)
+    public void MountPlayer(IDriver driver, System.Action onPlayerMountComplete = null)
     {
+        Shopper shopper = driver as Shopper;
         shopper.OnSetMovementTarget?.Invoke(playerStandingPoint); //Sets target in PlayerMovement
         shopper.OnMountDriveable?.Invoke(this, onPlayerMountComplete); //Mount Driveable in Shopper.cs passing callBack
     }
@@ -149,12 +145,13 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable, ICart
 
     public void OnCartCollision(Vector3 impactForce, GameObject objCollidedWith)
     {
+        ShopperNPC npcDriver = driver as ShopperNPC;
         Debug.Log("CART COLLISION LOGIC RUNNING ON " + gameObject.name + " CHECKING COLLISION DATA FOR " + objCollidedWith.name);
         if (!npcDriver.IsEnoughForceToBeStunned(impactForce)) return;
         if (!npcDriver.GetIsStunned() && !isPlayerDriven)
         {
             ToggleRigidbody();
-            DisableAgentOnStun(objCollidedWith);
+            DisableAgentOnStun(objCollidedWith, npcDriver);
         }
     }
 
@@ -163,14 +160,14 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable, ICart
         cartRB.isKinematic = cartRB.isKinematic;
     }
 
-    public void DisableAgentOnStun(GameObject objCollidedWith)
+    public void DisableAgentOnStun(GameObject objCollidedWith, ShopperNPC npcDriver)
     {
         GetNavMeshAgent().updatePosition = false;
         GetNavMeshAgent().updateRotation = false;
         npcDriver.StunNPC(objCollidedWith);
     }
 
-    public void ReEnableAgentAfterStun()
+    public void ReEnableAgentAfterStun(ShopperNPC npcDriver)
     {
         Debug.Log("Re-enabling cart navigation");    
         cartRB.isKinematic = true;

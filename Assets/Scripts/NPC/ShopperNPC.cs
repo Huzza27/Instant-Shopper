@@ -13,7 +13,7 @@ public enum NPCState
     Ragdoll
 }
 
-public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable
+public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
 {
     private NPCState currentState = NPCState.Idle;
     public float wanderRadius = 10f;
@@ -56,7 +56,7 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable
     }
     private void Update()
     {
-        if (isDrivingCart)
+        if (isDrivingCart && !isStunned)
         {
             Vector3 move = new Vector3(cart.GetStandingPoint().position.x, transform.position.y, cart.GetStandingPoint().position.z);
             transform.position = move;
@@ -86,16 +86,16 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable
         StartCoroutine(MoveToCart(() =>
         {
             MountCart(cart, onComplete);
-            SetNPCDriverForCart();
+            SetDriverForCart();
         }));
     }
 
-    public void SetNPCDriverForCart()
+    public void SetDriverForCart()
     {
         var playerCart = cart as PlayerCart;
         if (playerCart != null)
         {
-            playerCart.SetNPCDriver(this);
+            playerCart.SetDriver(this as IDriver);
         }
     }
 
@@ -272,7 +272,7 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable
     {
         GameObject rootObj = objCollidedWith.transform.root.gameObject;
         PlayerCart cart = rootObj.GetComponent<PlayerCart>();
-        Shopper player = cart.GetPlayerDriver();
+        Shopper player = cart.GetDriver() as Shopper;
         if (player == null)
         {
             return null;
@@ -287,7 +287,7 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable
         StartCoroutine(MoveToCart(() =>
         {
             animator.SetBool("isStunned", false);
-            (cart as PlayerCart).ReEnableAgentAfterStun();
+            (cart as PlayerCart).ReEnableAgentAfterStun(this);
         }));
     }
 
@@ -359,5 +359,20 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable
                 playerCart.ToggleRigidbody();
             }
         }
+    }
+
+    public bool IsPlayer()
+    {
+        return false;
+    }
+
+    public GameObject GetObject()
+    {
+        return this.gameObject;
+    }
+
+    public void SetDrivable(IDriveable driveable)
+    {
+        
     }
 }

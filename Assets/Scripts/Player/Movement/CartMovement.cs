@@ -8,7 +8,7 @@ public class CartMovement : MonoBehaviour
     [SerializeField] PlayerCart currentCart;
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float turnSpeed = 180f;
-    [SerializeField] Shopper driver;
+    [SerializeField]  IDriver driver;
     [SerializeField] InputAction rightMouseDown;
     [SerializeField] float cameraResetSpeed = 5f;
     [SerializeField] float alignmentForce = 2f; // How strongly cart follows camera
@@ -33,7 +33,7 @@ public class CartMovement : MonoBehaviour
         rightMouseDown.canceled += _ => SetRotationFlagForCart(true);
     }
     
-    public void SetDriver(Shopper newDriver)
+    public void SetDriver(IDriver newDriver)
     {
         driver = newDriver;
     }
@@ -142,10 +142,10 @@ public class CartMovement : MonoBehaviour
     
     private void UpdateCameraCartAlignment()
     {
-        if (!driver) return;
+        if (driver == null) return;
 
         // Get the camera's forward direction (driver's forward)
-        Vector3 cameraForward = driver.transform.forward;
+        Vector3 cameraForward = driver.GetObject().transform.forward;
         Vector3 cartForward = currentCart.transform.forward;
 
         // Calculate signed angle between camera and cart
@@ -239,19 +239,5 @@ public class CartMovement : MonoBehaviour
         {
             isResettingCamera = true;
         }
-    }
-    
-    // Optional: Debug visualization
-    void OnDrawGizmos()
-    {
-        if (!currentCart || !driver) return;
-        
-        // Draw cart forward direction in blue
-        Gizmos.color = Color.blue;
-        Gizmos.DrawRay(currentCart.transform.position, currentCart.transform.forward * 2f);
-        
-        // Draw camera forward direction in red
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(currentCart.transform.position + Vector3.up * 0.5f, driver.transform.forward * 2f);
     }
 }

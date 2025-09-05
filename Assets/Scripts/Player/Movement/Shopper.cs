@@ -2,7 +2,7 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Shopper : MonoBehaviour
+public class Shopper : MonoBehaviour, IDriver
 {
     [SerializeField] public UnityEvent<ICart> OnShoppingCartInteract;
     [SerializeField] public UnityEvent<IDriveable, System.Action> OnMountDriveable;
@@ -140,5 +140,15 @@ public class Shopper : MonoBehaviour
     public CharacterController GetCharacterController()
     {
         return GetComponent<CharacterController>();
+    }
+
+    public bool IsPlayer()
+    {
+        return true;
+    }
+
+    public GameObject GetObject()
+    {
+        return this.gameObject;
     }
 }

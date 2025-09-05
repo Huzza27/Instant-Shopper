@@ -4,7 +4,7 @@ using UnityEngine;
 public interface IDriveable
 {
     Transform GetSeatTransform();
-    public void Mount(Shopper shopper, System.Action onMountComplete = null);
+    public void Mount(IDriver shopper, System.Action onMountComplete = null);
     public void Dismount(Shopper shopper, System.Action onDismountComplete = null);
     public void EnableMotor();
 }
