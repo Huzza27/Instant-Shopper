@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -20,6 +21,7 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
     public float itemCollectionDelay;
     public float moveToNewShelfDelay;
     [SerializeField] private NavMeshAgent agent;
+    private NavMeshAgent tempNPCAgent;
     [SerializeField] private int numItemsToCollect;
     private int itemsCollected = 0;
     [SerializeField] private GameObject cartObj;
@@ -35,11 +37,20 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
     [SerializeField] private Transform neckTransform, stunLookAtTarget;
     [SerializeField] private float minForceForStun;
     [SerializeField] private GameObject stunUI;
+    [SerializeField] private GameObject mainAvatarObject;
     [SerializeField] UnityEvent<bool> OnShopperStun;
+    public float rotationSmoothTime = 0.1f; // smaller = snappier
+    public float positionSmoothTime = 0.05f;
+    private float rotationVelocity;
+
+    [SerializeField] private UnityEvent<Vector3> OnForceRagdoll;
+
     bool isDrivingCart = false;
     public Transform GetLastNavMeshAgentTarget() => lastNavMeshTarget;
     public bool GetIsStunned() => isStunned;
     [SerializeField] private float delayForStun = 7f;
+
+    private IDriveable currentDriveable;
 
     void Start()
     {
@@ -56,13 +67,48 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
     }
     private void Update()
     {
-        if (isDrivingCart && !isStunned)
+        if (currentState == NPCState.Ragdoll)
         {
-            Vector3 move = new Vector3(cart.GetStandingPoint().position.x, transform.position.y, cart.GetStandingPoint().position.z);
-            transform.position = move;
-            transform.rotation = cart.GetCartTransform().rotation;
+            HandleRootObjectFolowForRagdoll();
+        }
+        HandleCartMovement();
+    }
+
+    void HandleRootObjectFolowForRagdoll()
+    {
+        if (Vector3.Distance(transform.position, ragDollObject.transform.position) < 0.1f)
+        {
+            return;
+        }
+        transform.position = ragDollObject.transform.position;
+    }
+
+    public void HandleCartMovement()
+    {
+        if (isDrivingCart)
+        {
+            // --- Position ---
+            Vector3 targetPos = new Vector3(
+                cart.GetStandingPoint().position.x,
+                transform.position.y,
+                cart.GetStandingPoint().position.z
+            );
+
+            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime / positionSmoothTime);
+
+            // --- Rotation ---
+            float targetY = cart.GetCartTransform().eulerAngles.y;
+            float newY = Mathf.SmoothDampAngle(
+                transform.eulerAngles.y,
+                targetY,
+                ref rotationVelocity,
+                rotationSmoothTime
+            );
+
+            transform.rotation = Quaternion.Euler(0f, newY, 0f);
         }
     }
+
 
     private void LateUpdate()
     {
@@ -79,15 +125,24 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
         neckTransform.LookAt(dir);
     }
 
-    #region CART
-    void FindAndMountCart(System.Action onComplete)
+    #region CART MOUNTING
+    public void FindAndMountCart(System.Action onComplete)
     {
+        if (!isAgentActive())
+        {
+            agent.enabled = true;
+        }
         cart = cartObj.GetComponent<ICart>(); //Test case
         StartCoroutine(MoveToCart(() =>
         {
             MountCart(cart, onComplete);
             SetDriverForCart();
         }));
+    }
+
+    public bool isAgentActive()
+    {
+        return agent.enabled;
     }
 
     public void SetDriverForCart()
@@ -129,11 +184,11 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
     public void MountCart(ICart cart, System.Action onComplete)
     {
         this.cart = cart;
+        SetDrivable(cart as IDriveable);
         agent.enabled = false;
         transform.localRotation = Quaternion.identity;
         MoveHandsToCartHandles();
-        agent = cart.GetNavMeshAgent();
-        agent.enabled = true;
+        currentDriveable.GetNavMeshAgent().enabled = true;
         onComplete?.Invoke(); //Starts shopping routine in Initialize
     }
     #endregion
@@ -239,8 +294,6 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
     }
     #endregion
 
-
-
     public void SetState(NPCState state)
     {
         currentState = state;
@@ -250,17 +303,17 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
         throw new System.NotImplementedException();
     }
 
-
     public void StunNPC(GameObject objCollidedWith)
     {
-        Debug.Log("NPC Stunned");
-        
-        ToggleAlertUI();
-        stunLookAtTarget = GetShopperFromCartCollision(objCollidedWith);
-        isStunned = true;
-        animator.SetBool("isStunned", true);
-        //Look at player somehow
-        Invoke(nameof(ReEnableNPC), delayForStun);
+        return;
+        if (currentState == NPCState.Idle)
+        {
+            Debug.Log("NPC Stunned");
+            isStunned = true;
+            animator.SetBool("isStunned", true);
+            //Look at player somehow
+            Invoke(nameof(ReEnableNPC), delayForStun);
+        }
     }
 
     public void ToggleAlertUI()
@@ -282,6 +335,7 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
 
     public void ReEnableNPC()
     {
+
         ToggleAlertUI();
         Debug.Log("NPC Returning To Cart");
         StartCoroutine(MoveToCart(() =>
@@ -289,18 +343,6 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
             animator.SetBool("isStunned", false);
             (cart as PlayerCart).ReEnableAgentAfterStun(this);
         }));
-    }
-
-
-    public void UnRagdoll()
-    {
-        agent.isStopped = false;
-        ragDollObject.SetActive(false);
-        animator.enabled = true;
-        mainCollider.enabled = true;
-        SetState(NPCState.Idle);
-        ToggleCartRB();
-        //StartCoroutine(ShopRoutine());
     }
 
     public bool IsEnoughForceToBeStunned(Vector3 force)
@@ -312,6 +354,8 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
         return false;
     }
 
+    #region RAGDOLLING AND COLLISIONS
+
     public void StaticRagdoll()
     {
         SetState(NPCState.Ragdoll);
@@ -319,19 +363,35 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
         animator.enabled = false;
         ragDollObject.SetActive(true);
         SecurityAlertManager.Instance.AlertSecurity(transform.position);
-        Invoke(nameof(UnRagdoll), 5f); // Automatically unragdoll after 5 seconds
+        Invoke(nameof(GetUpAfterRagDoll), 5f); // Automatically unragdoll after 5 seconds
+    }
+
+    public void UnRagdoll()
+    {
+        SetState(NPCState.Idle);
+        ToggleCartRB();
+        //StartCoroutine(ShopRoutine());
+    }
+
+    public void GetUpAfterRagDoll()
+    {
+        //WHEN I HAVE GET UP ANIMATION SHIT, PUT IT HERE
+        SetState(NPCState.Idle);        
     }
 
     public void ForceRagdoll(Vector3 force)
     {
+        if (isDrivingCart)
+        {
+            UpdateCartFollowFlag(false);
+        }
         SetState(NPCState.Ragdoll);
-        mainCollider.enabled = false;
-        agent.isStopped = true;
-        animator.enabled = false;
-        ragDollObject.SetActive(true);
-        ragDollObject.GetComponent<Rigidbody>().AddForce(force * cartImpactForceMultiplier, ForceMode.Impulse);
-        SecurityAlertManager.Instance.AlertSecurity(transform.position);
-        Invoke(nameof(UnRagdoll), 5f); // Automatically unragdoll after 5 seconds
+        OnForceRagdoll?.Invoke(force);
+    }
+
+    public void UpdateCartFollowFlag(bool value)
+    {
+        isDrivingCart = value;
     }
 
 
@@ -361,6 +421,8 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
         }
     }
 
+    #endregion
+
     public bool IsPlayer()
     {
         return false;
@@ -373,6 +435,11 @@ public class ShopperNPC : MonoBehaviour, IShopperNPC, ICartCollidable, IDriver
 
     public void SetDrivable(IDriveable driveable)
     {
-        
+        currentDriveable = driveable;
+    }
+    
+    public IDriveable GetDrivable()
+    {
+        return currentDriveable;
     }
 }

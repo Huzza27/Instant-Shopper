@@ -157,7 +157,7 @@ public class PlayerCart : MonoBehaviour, ICart, IDriveable, IInteractable, ICart
 
     public void ToggleRigidbody()
     {
-        cartRB.isKinematic = cartRB.isKinematic;
+        cartRB.isKinematic = !cartRB.isKinematic;
     }
 
     public void DisableAgentOnStun(GameObject objCollidedWith, ShopperNPC npcDriver)

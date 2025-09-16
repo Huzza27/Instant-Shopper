@@ -11429,15 +11429,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.0217878
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.0217878
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.0217878
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11720,8 +11720,16 @@ PrefabInstance:
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: -4096120871940991593, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.118
+      objectReference: {fileID: 0}
+    - target: {fileID: -4096120871940991593, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4096120871940991593, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.517
       objectReference: {fileID: 0}
     - target: {fileID: -4096120871940991593, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12337,7 +12345,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5465940246521907071, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.00004932566
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5465940246521907071, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12345,19 +12353,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5465940246521907071, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.01027012
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5465940246521907071, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5465940246521907071, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5465940246521907071, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5465940246521907071, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 1.023802
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5465940246521907071, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -2.6370933
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5465940246521907071, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 1.0545979
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6000407479487422213, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -12544,8 +12564,16 @@ PrefabInstance:
       value: 7.0468283
       objectReference: {fileID: 0}
     - target: {fileID: 8632055958874330854, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.11800017
+      objectReference: {fileID: 0}
+    - target: {fileID: 8632055958874330854, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8632055958874330854, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.5170007
       objectReference: {fileID: 0}
     - target: {fileID: 8743813690021804245, guid: 96d91dfc5d4abb0439f3e7c86e06ae9d, type: 3}
       propertyPath: m_Enabled
@@ -16867,10 +16895,10 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 924301952}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.49999997
-  m_Speed: 0.5
+  m_Speed: 2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -16879,7 +16907,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 0.99999994
-  m_BaseOffset: 0.82
+  m_BaseOffset: 0.66
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!1 &924477481 stripped
@@ -17290,6 +17318,7 @@ GameObject:
   - component: {fileID: 938448522}
   - component: {fileID: 938448524}
   - component: {fileID: 938448525}
+  - component: {fileID: 938448526}
   m_Layer: 0
   m_Name: SHOPPER_NPC
   m_TagString: Untagged
@@ -17325,7 +17354,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.38
-  m_Speed: 3
+  m_Speed: 2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -17366,10 +17395,63 @@ MonoBehaviour:
   stunLookAtTarget: {fileID: 1390084557847210254}
   minForceForStun: 0
   stunUI: {fileID: 1416260260}
+  mainAvatarObject: {fileID: 682346280}
   OnShopperStun:
     m_PersistentCalls:
       m_Calls: []
-  delayForStun: 50
+  rotationSmoothTime: 0.2
+  positionSmoothTime: 0.1
+  OnForceRagdoll:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 938448526}
+        m_TargetAssemblyTypeName: NPCRagdollController, Assembly-CSharp
+        m_MethodName: RagdollNPCWithForce
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  delayForStun: 1.2
+--- !u!114 &938448526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 938448521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80622486adfa8c84c8da95c055ded122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  npcPhysicsSwitchGO: {fileID: 511131951}
+  mainCollider: {fileID: 682346284}
+  npcAnimator: {fileID: 682346283}
+  originalHipsParent: {fileID: 682346280}
+  hipsLocalYOffset: 1.080262
+  npcScript: {fileID: 938448525}
+  npcAgent: {fileID: 938448524}
+  knockoutDuration: 5
+  OnGetUp:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 938448525}
+        m_TargetAssemblyTypeName: ShopperNPC, Assembly-CSharp
+        m_MethodName: GetUpAfterRagDoll
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &948088865
 PrefabInstance:
   m_ObjectHideFlags: 0
